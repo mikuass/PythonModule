@@ -1,0 +1,9 @@
+Metadata-Version: 2.1
+Name: pmutils
+Version: 0.0.4
+Author: Mikuas
+Author-email: email@example.com
+Requires-Dist: pyautogui
+Requires-Dist: comtypes
+Requires-Dist: pycaw
+Requires-Dist: wmi
