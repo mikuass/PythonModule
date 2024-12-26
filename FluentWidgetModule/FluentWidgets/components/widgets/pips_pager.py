@@ -150,7 +150,7 @@ class PipsPager(QListWidget):
             self.setViewportMargins(0, 15, 0, 15)
             self.preButton = ScrollButton(FluentIcon.CARE_UP_SOLID, self)
             self.nextButton = ScrollButton(FluentIcon.CARE_DOWN_SOLID, self)
-            self.setFixedWidth(1)
+            self.setFixedWidth(12)
 
             self.preButton.installEventFilter(ToolTipFilter(self.preButton, 1000, ToolTipPosition.TOP))
             self.nextButton.installEventFilter(ToolTipFilter(self.nextButton, 1000, ToolTipPosition.BOTTOM))

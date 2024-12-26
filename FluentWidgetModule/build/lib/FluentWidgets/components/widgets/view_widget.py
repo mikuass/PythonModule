@@ -26,8 +26,8 @@ class UiMessageBox:
         self.contentLabel = BodyLabel(content, parent)
 
         self.buttonGroup = QFrame(parent)
-        self.yesButton = PrimaryPushButton(self.tr('OK'), self.buttonGroup)
-        self.cancelButton = QPushButton(self.tr('Cancel'), self.buttonGroup)
+        self.yesButton = PrimaryPushButton(self.tr('确定'), self.buttonGroup)
+        self.cancelButton = QPushButton(self.tr('取消'), self.buttonGroup)
 
         self.vBoxLayout = QVBoxLayout(parent)
         self.textLayout = QVBoxLayout()
@@ -117,6 +117,7 @@ class MessageBoxBase(MaskDialogBase):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+        self.hide()
         self.buttonGroup = QFrame(self.widget)
         self.yesButton = PrimaryPushButton(self.tr('确定'), self.buttonGroup)
         self.cancelButton = QPushButton(self.tr('取消'), self.buttonGroup)
@@ -203,6 +204,7 @@ class Dialog(FramelessDialog, UiMessageBox):
     def __init__(self, title: str, content: str, parent=None):
         super().__init__(parent=parent)
         self._setUpUi(title, content, self)
+        self.hide()
 
         self.windowTitleLabel = QLabel(title, self)
 
@@ -272,17 +274,14 @@ class ColorDialog(Color):
         super().__init__(color, title, parent, enableAlpha)
         self.cancelButton.setText('取消')
         self.yesButton.setText('确定')
-
-    def getColor(self):
-        self.exec()
-        return self.color.name()
+        self.hide()
 
 
 class CustomDialog(MessageBoxBase):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.hide()
-        self.widget.setMinimumSize(400, 250)
+        self.widget.setMinimumSize(parent.width() / 2, parent.height() / 2)
 
     def addWidget(self, widget: QWidget,  stretch: int = 0, alignment: Qt.AlignmentFlag = Qt.AlignmentFlag.AlignCenter):
         self.viewLayout.addWidget(widget, stretch, alignment)
@@ -296,18 +295,35 @@ class CustomDialog(MessageBoxBase):
         self.widget.setFixedHeight(height)
         return self
 
+    def setFixedSize(self, width: int, height: int):
+        self.widget.setFixedSize(width, height)
+        return self
+
+    def width(self):
+        return self.widget.width()
+
+    def height(self):
+        return self.widget.height()
+
 
 class FlowLayoutWidget(SmoothScrollWidget):
-    """ 流式布局 """
-    def __init__(self, duration: int = 250, ease: QEasingCurve = QEasingCurve.Type.InCurve, parent=None):
+    """
+    流式布局
+    needAni: bool
+        whether to add moving animation
+
+    isTight: bool
+        whether to use the tight layout when widgets are hidden
+    """
+    def __init__(self, duration=250, ease=QEasingCurve.Type.InCurve, parent=None, needAni=True, isTight=False):
         # InCurve
         # OutBack
         super().__init__(parent)
-        self.__initLayout(duration, ease)
+        self.__initLayout(duration, ease, needAni, isTight)
         self.__widgets = [] # type: [QWidget]
 
-    def __initLayout(self, duration: int, ease: QEasingCurve):
-        self.__flowLayout = FlowLayout(self, True)
+    def __initLayout(self, duration: int, ease: QEasingCurve, needAni: bool, isTight: bool):
+        self.__flowLayout = FlowLayout(needAni=needAni, isTight=isTight)
         self.__flowLayout.setAnimation(duration, ease)
         self.createVBoxLayout().addLayout(self.__flowLayout)
 
@@ -343,8 +359,8 @@ class FlipViewWidget(HorizontalFlipView):
         self.setItemDelegate(FlipItemDelegate(color, fontSize, fontColor, text, width, height, self))
         return self
 
-    def setAutoPlay(self, interval: int = 1500):
-        """ set image autoPlay"""
+    def enableAutoPlay(self, interval: int = 1500):
+        """ set image autoPlay """
         self.currentIndexChanged.connect(lambda index: self.__setIndex(index))
         self.__initTimer(interval)
         return self
