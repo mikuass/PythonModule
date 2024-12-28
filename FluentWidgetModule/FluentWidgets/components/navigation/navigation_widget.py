@@ -37,7 +37,13 @@ class NavigationBase(QWidget):
         self._key = str(int(self._key) + 1)
         return self
 
-    def addSubInterface(self, routeKey: str, text: str, widget: QWidget, icon: Union[QIcon, str, FluentIconBase] = None):
+    def addSubInterface(
+            self,
+            routeKey: str,
+            text: str,
+            widget: QWidget,
+            icon: Union[QIcon, str, FluentIconBase] = None
+    ):
         """ add sub interface, rotKey isUnique"""
         self.stackedWidget.addWidget(widget)
         self.navigation.addItem(routeKey, text, lambda: self.switchTo(widget), icon)
@@ -92,7 +98,13 @@ class SegmentedToolNav(PivotNav):
         self._initLayout()
         self.enableNavCenter()
 
-    def addSubInterface(self, routeKey: str, widget: QWidget, icon: Union[QIcon, str, FluentIconBase] = None, *args):
+    def addSubInterface(
+            self,
+            routeKey: str,
+            widget: QWidget,
+            icon: Union[QIcon, str, FluentIconBase] = None,
+            *args
+    ):
         self.stackedWidget.addWidget(widget)
         self.navigation.addItem(routeKey, icon, lambda: self.switchTo(widget))
         return self

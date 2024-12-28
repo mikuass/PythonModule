@@ -26,3 +26,6 @@ from .view_widget import (
     Dialog, MessageBox, UrlDialog, ColorDialog, CustomDialog, FlowLayoutWidget, FlipViewWidget, FlipItemDelegate
 )
 from .drag_widget import DragFileWidget, DragFolderWidget
+from .drawer_widget import (
+    PopDrawerWidgetBase, LeftPopDrawerWidget, RightPopDrawerWidget, TopPopDrawerWidget, BottomPopDrawerWidget
+)

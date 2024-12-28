@@ -78,7 +78,9 @@ class DragFileWidget(DragFolderWidget):
         self.fileFilter = fileFilter
 
     def _showDialog(self):
-        return self.selectionChange.emit(QFileDialog.getOpenFileNames(self, "选择文件", self.defaultDir, self.fileFilter)[0])
+        return self.selectionChange.emit(
+            QFileDialog.getOpenFileNames(self, "选择文件", self.defaultDir, self.fileFilter)[0]
+        )
 
     def dropEvent(self, event):
         urls = [url.toLocalFile() for url in event.mimeData().urls()]

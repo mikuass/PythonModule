@@ -3,8 +3,10 @@ from typing import Union
 
 from PySide6.QtGui import Qt, QIcon
 from PySide6.QtWidgets import QWidget, QHBoxLayout
-from qfluentwidgets import TitleLabel, PushButton, PrimaryPushButton, TransparentPushButton, Slider, CaptionLabel, \
+from qfluentwidgets import (
+    TitleLabel, PushButton, PrimaryPushButton, TransparentPushButton, Slider, CaptionLabel,
     FluentIconBase, ExpandGroupSettingCard, ToolButton
+)
 
 
 class ExpandGroupCard(ExpandGroupSettingCard):
@@ -43,16 +45,42 @@ class ExpandGroupCard(ExpandGroupSettingCard):
         hLayout.addWidget(button, 0, Qt.AlignmentFlag.AlignRight)
         return button
 
-    def addButtonCard(self, title: str, icon: Union[QIcon, str, FluentIconBase], text: str, parent: QWidget= None):
+    def addButtonCard(
+            self,
+            title: str,
+            icon: Union[QIcon, str, FluentIconBase],
+            text: str,
+            parent: QWidget = None
+    ):
         return self.__initButton(title, icon, text, parent, PushButton)
 
-    def addPrimaryButtonCard(self, title: str, icon: Union[QIcon, str, FluentIconBase], text: str, parent: QWidget = None):
+    def addPrimaryButtonCard(
+            self,
+            title: str,
+            icon: Union[QIcon, str, FluentIconBase],
+            text: str,
+            parent: QWidget = None
+    ):
         return self.__initButton(title, icon, text, parent, PrimaryPushButton)
 
-    def addTransparentButtonCard(self, title: str, icon: Union[QIcon, str, FluentIconBase], text: str, parent: QWidget = None):
+    def addTransparentButtonCard(
+            self,
+            title: str,
+            icon: Union[QIcon, str, FluentIconBase],
+            text: str,
+            parent: QWidget = None
+    ):
         return self.__initButton(title, icon, text, parent, TransparentPushButton)
 
-    def addSliderCard(self, title: str, minValue: int, maxValue: int, defaultValue: int, orientation=Qt.Orientation.Horizontal, parent: QWidget = None):
+    def addSliderCard(
+            self,
+            title: str,
+            minValue: int,
+            maxValue: int,
+            defaultValue: int,
+            orientation=Qt.Orientation.Horizontal,
+            parent: QWidget = None
+    ):
         slider = Slider(orientation, parent)
         slider.setRange(minValue, maxValue)
         slider.setValue(defaultValue)
@@ -67,7 +95,12 @@ class ExpandGroupCard(ExpandGroupSettingCard):
         slider.valueChanged.connect(lambda: label.setText(str(slider.value())))
         return slider
 
-    def addCustomWidget(self, widget: QWidget, stretch: int = 0, alignment: Qt.AlignmentFlag = Qt.AlignmentFlag(0)):
+    def addCustomWidget(
+            self,
+            widget: QWidget,
+            stretch: int = 0,
+            alignment: Qt.AlignmentFlag = Qt.AlignmentFlag(0)
+    ):
         hLayout = self._initWidget()
         hLayout.addWidget(widget, stretch, alignment)
         return hLayout

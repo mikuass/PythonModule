@@ -272,8 +272,15 @@ class MSFluentWindow(FluentWindowBase):
         self.titleBar.raise_()
         self.titleBar.setAttribute(Qt.WA_StyledBackground)
 
-    def addSubInterface(self, interface: QWidget, icon: Union[FluentIconBase, QIcon, str], text: str,
-                        selectedIcon=None, position=NavigationItemPosition.TOP, isTransparent=False) -> NavigationBarPushButton:
+    def addSubInterface(
+            self,
+            interface: QWidget,
+            icon: Union[FluentIconBase, QIcon, str],
+            text: str,
+            selectedIcon=None,
+            position=NavigationItemPosition.TOP,
+            isTransparent=False
+    ) -> NavigationBarPushButton:
         """ add sub interface, the object name of `interface` should be set already """
         if not interface.objectName():
             raise ValueError("The object name of `interface` can't be empty string.")

@@ -3,8 +3,7 @@ import os
 
 
 class RegeditUtils:
-    @staticmethod
-    def queryRegeditContent(path: str = None):
+    def queryRegeditContent(self, path: str = None):
         """ query regedit content, path is none, query boot item content """
         if path is None:
             os.system(fr'reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run" > result')

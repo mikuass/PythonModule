@@ -5,9 +5,10 @@ from PySide6.QtCore import QSize, QUrl
 from PySide6.QtGui import Qt, QIcon
 from PySide6.QtWidgets import QWidget
 from qfluentwidgets import (
-    PushButton, PrimaryPushButton, TransparentPushButton, ToolButton, PrimaryToolButton, TransparentToolButton,
-    DropDownPushButton, PrimaryDropDownPushButton, FluentIconBase, TransparentDropDownPushButton, DropDownToolButton,
-    PrimaryDropDownToolButton, TransparentDropDownToolButton, SplitPushButton, PrimarySplitPushButton, HyperlinkButton,
+    TransparentDropDownToolButton, SplitPushButton, PrimarySplitPushButton, HyperlinkButton,
+    PushButton, PrimaryPushButton, TransparentPushButton, ToolButton, PrimaryToolButton,
+    TransparentToolButton, DropDownPushButton, PrimaryDropDownPushButton, FluentIconBase,
+    TransparentDropDownPushButton, DropDownToolButton, PrimaryDropDownToolButton,
     CheckBox, Action, SwitchButton
 )
 from qfluentwidgets.components.material import AcrylicMenu
@@ -34,7 +35,13 @@ class ButtonCardBase(CardBase):
         self.hBoxLayout.addWidget(self.button, 0, Qt.AlignmentFlag.AlignRight)
         return self
 
-    def insertWidget(self, index: int, widget: QWidget, stretch: int = 0, alignment: Qt.AlignmentFlag = Qt.AlignmentFlag.AlignRight):
+    def insertWidget(
+            self,
+            index: int,
+            widget: QWidget,
+            stretch: int = 0,
+            alignment: Qt.AlignmentFlag = Qt.AlignmentFlag.AlignRight
+    ):
         self.hBoxLayout.insertWidget(index, widget, stretch, alignment)
         return self
 
@@ -167,10 +174,14 @@ class DropDownCardBase(ButtonCardBase):
         if texts:
             if icons:
                 for icon, text, in zip(icons, texts):
-                    self.menu.addAction(Action(icon, text, triggered=triggered[texts.index(text)] if triggered else None))
+                    self.menu.addAction(
+                        Action(icon, text, triggered=triggered[texts.index(text)] if triggered else None)
+                    )
             else:
                 for text in texts:
-                    self.menu.addAction(Action(text, triggered=triggered[text.index(text)] if triggered else None))
+                    self.menu.addAction(
+                        Action(text, triggered=triggered[text.index(text)] if triggered else None)
+                    )
 
     def initButton(self, btText: str = None, btIcon: Union[QIcon, str, FluentIconBase] = None):
         super().initButton()

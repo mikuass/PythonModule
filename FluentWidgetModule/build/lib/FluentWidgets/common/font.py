@@ -13,6 +13,7 @@ def setFonts_(widgets: list[QWidget], fontSize: list[int], weight: QFont.Weight 
         widget.setFont(getFont(size, weight))
 
 def getFont(fontSize: int, weight: QFont.Weight = QFont.Weight.Normal):
+
     """ get font size"""
     font = QFont()
     font.setFamilies(['Segoe UI', 'Microsoft YaHei', 'PingFang SC'])

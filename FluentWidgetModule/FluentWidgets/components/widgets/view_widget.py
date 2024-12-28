@@ -283,7 +283,12 @@ class CustomDialog(MessageBoxBase):
         self.hide()
         self.widget.setMinimumSize(parent.width() / 2, parent.height() / 2)
 
-    def addWidget(self, widget: QWidget,  stretch: int = 0, alignment: Qt.AlignmentFlag = Qt.AlignmentFlag.AlignCenter):
+    def addWidget(
+            self,
+            widget: QWidget,
+            stretch: int = 0,
+            alignment: Qt.AlignmentFlag = Qt.AlignmentFlag.AlignCenter
+    ):
         self.viewLayout.addWidget(widget, stretch, alignment)
         return self
 
@@ -355,7 +360,15 @@ class FlipViewWidget(HorizontalFlipView):
         self.setAspectRatioMode(aspectRation)
         self.setBorderRadius(24)
 
-    def setDelegate(self, color: QColor, fontSize: int, fontColor: QColor, text: str, width: int = None, height: int = None):
+    def setDelegate(
+            self,
+            color: QColor,
+            fontSize: int,
+            fontColor: QColor,
+            text: str,
+            width: int = None,
+            height: int = None
+    ):
         self.setItemDelegate(FlipItemDelegate(color, fontSize, fontColor, text, width, height, self))
         return self
 
@@ -390,7 +403,16 @@ class FlipViewWidget(HorizontalFlipView):
 
 
 class FlipItemDelegate(FlipImageDelegate):
-    def __init__(self, color: QColor, fontSize: int, fontColor: QColor, text: str, width: int = None, height: int = None, parent=None):
+    def __init__(
+            self,
+            color: QColor,
+            fontSize: int,
+            fontColor: QColor,
+            text: str,
+            width: int = None,
+            height: int = None,
+            parent=None
+    ):
         super().__init__(parent)
         self.color = color
         self.width = width

@@ -15,7 +15,7 @@ from qfluentwidgets import PrimaryPushButton, ComboBox, TitleLabel, PushButton
 class Window(VerticalPagerWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.resize(800, 520)
+        self.displayPrevButton().displayNextButton().resize(800, 520)
         # self.enableScrollTogglePage(False)
         self.dialogButton = PrimaryPushButton("Show Dialog", self)
         self.messageBoxButton = PrimaryPushButton("Show Message Box", self)
@@ -36,7 +36,7 @@ class Window(VerticalPagerWidget):
         self.com1.setFixedWidth(self.customDialog.width() - 50)
         self.com2.setFixedWidth(self.customDialog.width() - 50)
 
-        self.flyout = FlowLayoutWidget(parent=self)
+        self.flyout = FlowLayoutWidget()
 
         for _ in range(50):
             button = PushButton(str(_), self)
@@ -51,9 +51,7 @@ class Window(VerticalPagerWidget):
             r"C:\Users\Administrator\OneDrive\Pictures\20.png",
             r"C:\Users\Administrator\OneDrive\Pictures\21.png"
         ])
-        self.flip.enableAutoPlay().setBorderRadius(0)
-
-        self.displayPrevButton().displayNextButton()
+        self.flip.enableAutoPlay().setBorderRadius(8)
 
         self.addWidgets([
             self.dialogButton,

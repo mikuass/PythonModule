@@ -4,10 +4,15 @@ import subprocess
 
 class TerminalUtils:
 
-    @staticmethod
-    def createTerminalArgs(args: list[str], types: list | str = str, helpInfo: list = None,
-                           isRequired: list[bool] = False, defaultValue: list = None,
-                           consts: list = None, description='GetTerminalArgs'):
+    def createTerminalArgs(
+            self,
+            args: list[str],
+            types: list | str = str,
+            helpInfo: list = None,
+            isRequired: list[bool] = False,
+            defaultValue: list = None,
+            consts: list = None, description='GetTerminalArgs'
+    ):
         parser = argparse.ArgumentParser(description=description)
         length = len(args)
         __args = args
@@ -30,8 +35,7 @@ class TerminalUtils:
                                     default=value, required=required)
         return parser.parse_args()
 
-    @staticmethod
-    def runTerminalCommand(element, asynchronous=False):
+    def runTerminalCommand(self, element, asynchronous=False):
         if asynchronous:
             processes = []
             proc = subprocess.Popen(element)

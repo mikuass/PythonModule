@@ -19,11 +19,11 @@ class PagerWidgetBase(QWidget):
         self.__widgets = []  # type: [QWidget]
         setTheme(Theme.AUTO)
 
-    def addWidget(self, widget: QWidget):
+    def addWidget(self, widget: QWidget, deltaX=0, deltaY=76):
         """ add widget to stacked widget """
-        self._stackedWidget.addWidget(widget)
-        self.__addToWidgets(widget)
-        self._pager.setPageNumber(len(self.__widgets))
+        self._stackedWidget.addWidget(widget, deltaX, deltaY)
+        self._addToWidgets(widget)
+        self._pager.setPageNumber(len(self.getAllWidget()))
         return self
 
     def addWidgets(self, widgets: list[QWidget]):
@@ -33,7 +33,7 @@ class PagerWidgetBase(QWidget):
         return self
 
     def setCurrentIndex(self, index: int):
-        """ set current index """
+        """ set current page index """
         self._pager.setCurrentIndex(index)
 
     def removeWidget(self, index: int):
@@ -43,7 +43,7 @@ class PagerWidgetBase(QWidget):
             self._pager.setPageNumber(len(self.__widgets))
         return self
 
-    def __addToWidgets(self, widget: QWidget):
+    def _addToWidgets(self, widget: QWidget):
         if widget in self.__widgets:
             return
         self.__widgets.append(widget)
@@ -124,6 +124,13 @@ class VerticalPagerWidget(PagerWidgetBase):
     def __init__(self, parent=None):
         super().__init__(parent, Qt.Orientation.Horizontal)
         self._initLayout()
+
+    def addWidget(self, widget: QWidget, deltaX=76, deltaY=0):
+        """ add widget to stacked widget """
+        self._stackedWidget.addWidget(widget, deltaX, deltaY)
+        self._addToWidgets(widget)
+        self._pager.setPageNumber(len(self.getAllWidget()))
+        return self
 
     def _initLayout(self):
         self.__layout = VBoxLayout(self)

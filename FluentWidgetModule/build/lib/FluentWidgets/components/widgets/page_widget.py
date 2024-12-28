@@ -12,17 +12,18 @@ class PagerWidgetBase(QWidget):
 
     def __init__(self, parent=None, orientation=Qt.Orientation.Vertical):
         super().__init__(parent)
+        self.__toggle = True
         self._pager = PipsPager(orientation, self)
         self._stackedWidget = PopUpAniStackedWidget(self)
         self._pager.currentIndexChanged.connect(lambda index: self._stackedWidget.setCurrentIndex(index))
         self.__widgets = []  # type: [QWidget]
         setTheme(Theme.AUTO)
 
-    def addWidget(self, widget: QWidget):
+    def addWidget(self, widget: QWidget, deltaX=0, deltaY=76):
         """ add widget to stacked widget """
-        self._stackedWidget.addWidget(widget)
-        self.__addToWidgets(widget)
-        self._pager.setPageNumber(len(self.__widgets))
+        self._stackedWidget.addWidget(widget, deltaX, deltaY)
+        self._addToWidgets(widget)
+        self._pager.setPageNumber(len(self.getAllWidget()))
         return self
 
     def addWidgets(self, widgets: list[QWidget]):
@@ -32,7 +33,7 @@ class PagerWidgetBase(QWidget):
         return self
 
     def setCurrentIndex(self, index: int):
-        """ set current index """
+        """ set current page index """
         self._pager.setCurrentIndex(index)
 
     def removeWidget(self, index: int):
@@ -42,10 +43,13 @@ class PagerWidgetBase(QWidget):
             self._pager.setPageNumber(len(self.__widgets))
         return self
 
-    def __addToWidgets(self, widget: QWidget):
+    def _addToWidgets(self, widget: QWidget):
         if widget in self.__widgets:
             return
         self.__widgets.append(widget)
+
+    def enableScrollTogglePage(self, enable: bool):
+        self.toggle = enable
 
     def displayNextButton(self):
         """ set next page button display """
@@ -102,15 +106,16 @@ class PagerWidgetBase(QWidget):
 
     def wheelEvent(self, event):
         super().wheelEvent(event)
-        index = self.getCurrentIndex()
-        if event.angleDelta().y() > 0:
-            if index == 0:
-                return
-            self.setCurrentIndex(index - 1)
-        else:
-            if index == self.getPageNumber() - 1:
-                return
-            self.setCurrentIndex(index + 1)
+        if self.__toggle:
+            index = self.getCurrentIndex()
+            if event.angleDelta().y() > 0:
+                if index == 0:
+                    return
+                self.setCurrentIndex(index - 1)
+            else:
+                if index == self.getPageNumber() - 1:
+                    return
+                self.setCurrentIndex(index + 1)
 
 
 class VerticalPagerWidget(PagerWidgetBase):
@@ -119,6 +124,13 @@ class VerticalPagerWidget(PagerWidgetBase):
     def __init__(self, parent=None):
         super().__init__(parent, Qt.Orientation.Horizontal)
         self._initLayout()
+
+    def addWidget(self, widget: QWidget, deltaX=76, deltaY=0):
+        """ add widget to stacked widget """
+        self._stackedWidget.addWidget(widget, deltaX, deltaY)
+        self._addToWidgets(widget)
+        self._pager.setPageNumber(len(self.getAllWidget()))
+        return self
 
     def _initLayout(self):
         self.__layout = VBoxLayout(self)

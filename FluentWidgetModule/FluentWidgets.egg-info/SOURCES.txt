@@ -26,6 +26,7 @@ FluentWidgets/components/widgets/button_card.py
 FluentWidgets/components/widgets/combo_box_card.py
 FluentWidgets/components/widgets/custom_card.py
 FluentWidgets/components/widgets/drag_widget.py
+FluentWidgets/components/widgets/drawer_widget.py
 FluentWidgets/components/widgets/expand_group_card.py
 FluentWidgets/components/widgets/folder_card.py
 FluentWidgets/components/widgets/list_widget.py

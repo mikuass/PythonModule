@@ -33,7 +33,12 @@ class ListWidget(List):
             listItem.append(item)
         return listItem
 
-    def addItems(self, items: list[str], itemHeight=45, alignFlag=Qt.AlignmentFlag.AlignVertical_Mask) -> list[QListWidgetItem]:
+    def addItems(
+            self,
+            items: list[str],
+            itemHeight=45,
+            alignFlag=Qt.AlignmentFlag.AlignVertical_Mask
+    ) -> list[QListWidgetItem]:
         listItem = []
         for item in items:
             item = QListWidgetItem(item)

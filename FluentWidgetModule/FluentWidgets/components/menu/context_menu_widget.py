@@ -17,7 +17,6 @@ class MenuBase:
         self._menu = None
         self._subMenu = None
 
-
     def addAction(self, action: Action):
         self._menu.addAction(action)
         return self
@@ -71,20 +70,37 @@ class MenuBase:
             actions.append(action)
         return actions
 
-    def _createSubMenu(self, icon: Union[QIcon, str, FluentIconBase], title: str, parentMenu: RoundMenu = None):
+    def _createSubMenu(
+            self,
+            icon: Union[QIcon, str, FluentIconBase],
+            title: str,
+            parentMenu: RoundMenu = None
+    ):
         parentMenu = parentMenu or self._menu
         self._subMenu = RoundMenu(title, parentMenu)
         self._subMenu.setIcon(icon)
         self.setSubMenuMinWidth(160)
         return parentMenu
 
-    def addSubAction(self, icon: Union[QIcon, str, FluentIconBase], title: str, action: Action, parentMenu: RoundMenu = None):
+    def addSubAction(
+            self,
+            icon: Union[QIcon, str, FluentIconBase],
+            title: str,
+            action: Action,
+            parentMenu: RoundMenu = None
+    ):
         """ parentMenu is None, default = self._menu """
         self._createSubMenu(icon, title, parentMenu).addMenu(self._subMenu)
         self._subMenu.addAction(action)
         return self
 
-    def addSubActions(self, icon: Union[QIcon, str, FluentIconBase], title: str, actions: list[Action], parentMenu: RoundMenu = None):
+    def addSubActions(
+            self,
+            icon: Union[QIcon, str, FluentIconBase],
+            title: str,
+            actions: list[Action],
+            parentMenu: RoundMenu = None
+    ):
         """ parentMenu is None, default = self._menu """
         self._createSubMenu(icon, title, parentMenu).addMenu(self._subMenu)
         self._subMenu.addActions(actions)
@@ -157,7 +173,7 @@ class Menu(MenuBase):
     """ 菜单栏组件 """
     def __init__(self, parent=None):
         super().__init__()
-        self.menu = RoundMenu(parent=parent)
+        self._menu = RoundMenu(parent=parent)
         self.setMenuMinWidth(160)
 
 
@@ -165,63 +181,85 @@ class AcrylicRoundMenu(Menu):
     """ 亚力克菜单 """
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.menu = AcrylicMenu('', parent)
+        self._menu = AcrylicMenu('', parent)
         self.setMenuMinWidth(160)
 
-    def _createSubMenu(self, icon: Union[QIcon, str, FluentIconBase], title: str, parentMenu: RoundMenu = None):
-        parentMenu = parentMenu or self.menu
-        self.subMenu = AcrylicMenu(title, parentMenu)
-        self.subMenu.setIcon(icon)
+    def _createSubMenu(
+            self,
+            icon: Union[QIcon, str, FluentIconBase],
+            title: str,
+            parentMenu: RoundMenu = None
+    ):
+        parentMenu = parentMenu or self._menu
+        self._subMenu = AcrylicMenu(title, parentMenu)
+        self._subMenu.setIcon(icon)
         self.setSubMenuMinWidth(160)
         return parentMenu
 
 
 class ProfileCardMenu(Menu):
     """ 个人信息卡片组件 """
-    def __init__(self, avatarPath: str, name: str, email: str, parent=None, buttonText: str = '主页', url: str = ''):
+    def __init__(
+            self,
+            avatarPath: str,
+            name: str,
+            email: str,
+            parent=None,
+            buttonText: str = '主页',
+            url: str = ''
+    ):
         super().__init__(parent)
         self._widget = QWidget()
         self._widget.setFixedSize(307, 82)
-        self.menu.addWidget(self._widget)
-        self.addSeparator()._initCard(avatarPath, name, email, buttonText, url)
+        self._menu.addWidget(self._widget)
+        self.addSeparator().__initCard(avatarPath, name, email, buttonText, url)
 
-    def _initCard(self, avatarPath: str, name: str, email: str, buttonText: str, url: str = ''):
-        self.avatar = AvatarWidget(avatarPath, self._widget)
-        self.nameLabel = BodyLabel(name, self._widget)
-        self.emailLabel = CaptionLabel(email, self._widget)
-        self.button = HyperlinkButton(url, buttonText, self._widget)
+    def __initCard(self, avatarPath: str, name: str, email: str, buttonText: str, url: str = ''):
+        self.__avatar = AvatarWidget(avatarPath, self._widget)
+        self.__nameLabel = BodyLabel(name, self._widget)
+        self.__emailLabel = CaptionLabel(email, self._widget)
+        self.__button = HyperlinkButton(url, buttonText, self._widget)
 
-        self.emailLabel.setTextColor(QColor(96, 96, 96), QColor(206, 206, 206))
-        setFont(self.button, 13)
+        self.__emailLabel.setTextColor(QColor(96, 96, 96), QColor(206, 206, 206))
+        self.setButtonFontSize(13)
 
         self.setAvatarRadius(24)
-        self.avatar.move(2, 6)
-        self.nameLabel.move(64, 13)
-        self.emailLabel.move(64, 32)
-        self.button.move(52, 48)
+        self.__avatar.move(3, 12)
+        self.__nameLabel.move(64, 13)
+        self.__emailLabel.move(64, 32)
+        self.__button.move(52, 48)
+
+    def setButtonFontSize(self, size: int):
+        setFont(self.__button, size)
+        return self
+
+    def setAvatarMove(self, x: int, y: int):
+        self.__avatar.move(x, y)
+        return self
 
     def setAvatarRadius(self, radius: int):
-        self.avatar.setRadius(radius)
+        self.__avatar.setRadius(radius)
+        return self
 
 
 class AcrylicProfileCardMenu(ProfileCardMenu):
     """ 亚力克个人信息卡片组件 """
     def __init__(self, avatarPath, name, email, parent=None, buttonText="主页", url=''):
         super().__init__(avatarPath, name, email, parent, buttonText, url)
-        self.menu = AcrylicMenu(parent)
-        self.menu.addWidget(self._widget)
-        self.menu.addSeparator()
+        self._menu = AcrylicMenu(parent)
+        self._menu.addWidget(self._widget)
+        self._menu.addSeparator()
 
 
 class CheckedMenu(MenuBase):
     """ 可选中菜单栏 """
     def __init__(self, parent=None, indicatorType: MenuIndicatorType = MenuIndicatorType.CHECK):
         super().__init__(parent)
-        self.menu = CheckableMenu('', parent, indicatorType)
+        self._menu = CheckableMenu('', parent, indicatorType)
         self.setMenuMinWidth(160)
 
     def createGroup(self):
-        return QActionGroup(self.menu)
+        return QActionGroup(self._menu)
 
     @staticmethod
     def getCheckedAction(actionGroup: QActionGroup):
@@ -229,7 +267,7 @@ class CheckedMenu(MenuBase):
 
     def addItem(self, icon: Union[QIcon, str, FluentIconBase], text: str):
         action = Action(icon, text, checkable=True)
-        self.menu.addAction(action)
+        self._menu.addAction(action)
         return action
 
     def addItems(self, icons: list[Union[QIcon, str, FluentIconBase]], texts: list[str]):
@@ -247,10 +285,10 @@ class CheckedMenu(MenuBase):
             parentMenu: CheckableMenu = None,
             indicatorType: MenuIndicatorType = MenuIndicatorType.RADIO
     ) -> Action:
-        """ parentMenu is None, default = self.menu """
+        """ parentMenu is None, default = self._menu """
         action = Action(icon, title, checkable=True)
-        self._createSubMenu(subIcon, text, parentMenu, indicatorType).addMenu(self.subMenu)
-        self.subMenu.addAction(action)
+        self._createSubMenu(subIcon, text, parentMenu, indicatorType).addMenu(self._subMenu)
+        self._subMenu.addAction(action)
         return action
 
     def addSubItems(
@@ -262,12 +300,12 @@ class CheckedMenu(MenuBase):
             parentMenu: CheckableMenu = None,
             indicatorType: MenuIndicatorType = MenuIndicatorType.RADIO
     ) -> list[Action]:
-        """ parentMenu is None, default = self.menu """
+        """ parentMenu is None, default = self._menu """
         actions = []
-        self._createSubMenu(icon, title, parentMenu, indicatorType).addMenu(self.subMenu)
+        self._createSubMenu(icon, title, parentMenu, indicatorType).addMenu(self._subMenu)
         for t, i in zip(text, subIcon):
             action = Action(i, t, checkable=True)
-            self.subMenu.addAction(action)
+            self._subMenu.addAction(action)
             actions.append(action)
         return actions
 
@@ -278,10 +316,10 @@ class CheckedMenu(MenuBase):
             parentMenu: RoundMenu = None,
             indicatorType: MenuIndicatorType = MenuIndicatorType.RADIO
     ) -> RoundMenu:
-        parentMenu = parentMenu or self.menu
-        self.subMenu = CheckableMenu(title, parentMenu, indicatorType)
+        parentMenu = parentMenu or self._menu
+        self._subMenu = CheckableMenu(title, parentMenu, indicatorType)
         self.setSubMenuMinWidth(160)
-        self.subMenu.setIcon(icon)
+        self._subMenu.setIcon(icon)
         return parentMenu
 
     @staticmethod
@@ -304,7 +342,7 @@ class CheckedMenu(MenuBase):
 class AcrylicCheckedMenu(CheckedMenu):
     def __init__(self, parent=None, indicatorType: MenuIndicatorType = MenuIndicatorType.CHECK):
         super().__init__(parent)
-        self.menu = AcrylicCheckableMenu('', parent, indicatorType)
+        self._menu = AcrylicCheckableMenu('', parent, indicatorType)
 
 
 class Shortcut:

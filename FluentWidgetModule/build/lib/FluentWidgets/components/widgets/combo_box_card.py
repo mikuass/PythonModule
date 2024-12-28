@@ -12,7 +12,16 @@ from .folder_card import FolderListSettingCard
 
 class ComboBoxCardBase(CardBase):
     # noinspection PyUnusedLocal
-    def __init__(self, icon, title, content, parent=None, noSelected=False, items: list[str] = None, info: str = None):
+    def __init__(
+            self,
+            icon,
+            title,
+            content,
+            parent=None,
+            noSelected=False,
+            items: list[str] = None,
+            info: str = None
+    ):
         super().__init__()
         self.comboBoxButton = None
         self.noSelected = noSelected
