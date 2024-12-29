@@ -22,7 +22,6 @@ class DragFolderWidget(QFrame):
         self.orLabel = QLabel("或", self)
 
         self.button = HyperlinkButton('', "选择文件夹", self)
-        self.button.setStyleSheet('color: aqua;')
         setFonts([self.button, self.label, self.orLabel], 15)
 
         self.vBoxLayout.addWidgets([self.label, self.orLabel, self.button])
