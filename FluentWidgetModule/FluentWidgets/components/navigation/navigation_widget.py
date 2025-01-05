@@ -1,12 +1,14 @@
 # coding:utf-8
-from typing import Union
+from typing import Union, List
 
 from PySide6.QtGui import Qt, QIcon
 from PySide6.QtWidgets import QWidget
+
 from qfluentwidgets import (
     Pivot, SegmentedWidget, SegmentedToolWidget, SegmentedToggleToolWidget, FluentIconBase, TabBar,
     TabCloseButtonDisplayMode, PopUpAniStackedWidget, setTheme, Theme, HorizontalSeparator
 )
+
 from ..layout import VBoxLayout, HBoxLayout
 
 
@@ -51,10 +53,10 @@ class NavigationBase(QWidget):
 
     def addSubInterfaces(
             self,
-            routeKeys: list[str],
-            texts: list[str],
-            widgets: list[QWidget],
-            icons: list[Union[QIcon, str, FluentIconBase]] = None
+            routeKeys: List[str],
+            texts: List[str],
+            widgets: List[QWidget],
+            icons: List[Union[QIcon, str, FluentIconBase]] = None
     ):
         icons = icons if icons is not None else [None for _ in range(len(routeKeys))]
         for key, text, widget, icon in zip(routeKeys, texts, widgets, icons):
@@ -111,9 +113,9 @@ class SegmentedToolNav(PivotNav):
 
     def addSubInterfaces(
             self,
-            routeKeys: list[str],
-            icons: list[Union[QIcon, str, FluentIconBase]],
-            widgets: list[QWidget],
+            routeKeys: List[str],
+            icons: List[Union[QIcon, str, FluentIconBase]],
+            widgets: List[QWidget],
             *args
     ):
         for key, icon, widget in zip(routeKeys, icons, widgets):
@@ -170,10 +172,10 @@ class LabelBarWidget(QWidget):
         return self
 
     def addSubTabs(
-            self, routeKeys: list[str],
-            texts: list[str],
-            widgets: list[QWidget] = None,
-            icons: list[Union[QIcon, str, FluentIconBase]] = None
+            self, routeKeys: List[str],
+            texts: List[str],
+            widgets: List[QWidget] = None,
+            icons: List[Union[QIcon, str, FluentIconBase]] = None
     ):
         icons = icons if icons is not None else [None for _ in range(len(routeKeys))]
         for key, text, icon, widget in zip(routeKeys, texts, icons, widgets):

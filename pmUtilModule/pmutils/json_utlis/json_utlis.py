@@ -22,11 +22,12 @@ class JsonUtils:
             result = json.load(f)
             result.update(data)
             f.seek(0)
+            f.truncate()
             json.dump(result, f, ensure_ascii=False, indent=indent)
+        return f
 
     def writeJsonFile(self, path: str, data: dict, indent=4):
         """ write json file """
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=indent)
         return self
-

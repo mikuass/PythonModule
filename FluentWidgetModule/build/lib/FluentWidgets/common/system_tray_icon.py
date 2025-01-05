@@ -1,7 +1,11 @@
 # coding:utf-8
+from typing import List
+
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import QSystemTrayIcon
+
 from qfluentwidgets import SystemTrayMenu, Action, FluentIconBase
+
 from .fluent_icon import Icon
 
 
@@ -21,6 +25,6 @@ class SystemTrayIcon(QSystemTrayIcon):
         self.menu.addAction(action)
         return self
 
-    def addActions(self, actions: list[QAction] | list[QAction]):
+    def addActions(self, actions: List[QAction] | List[QAction]):
         self.menu.addActions(actions)
         self.setContextMenu(self.menu)

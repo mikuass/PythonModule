@@ -1,9 +1,10 @@
 # coding:utf-8
-from typing import Union
+from typing import Union, List
 
 from PySide6.QtCore import QSize, QUrl
 from PySide6.QtGui import Qt, QIcon
 from PySide6.QtWidgets import QWidget
+
 from qfluentwidgets import (
     TransparentDropDownToolButton, SplitPushButton, PrimarySplitPushButton, HyperlinkButton,
     PushButton, PrimaryPushButton, TransparentPushButton, ToolButton, PrimaryToolButton,
@@ -164,8 +165,8 @@ class DropDownCardBase(ButtonCardBase):
     # noinspection PyUnusedLocal
     def __init__(
             self, icon=None, title=None, content=None, btText=None,
-            btIcon=None, parent=None, menuTexts: list[str] = None,
-            menuIcons: list[Union[QIcon, str, FluentIconBase]] = None, triggered: list = None
+            btIcon=None, parent=None, menuTexts: List[str] = None,
+            menuIcons: List[Union[QIcon, str, FluentIconBase]] = None, triggered: List = None
     ):
         super().__init__(icon, title, content, parent)
         self.menu = AcrylicMenu('', self)

@@ -12,6 +12,7 @@ FluentWidgets/common/fluent_icon.py
 FluentWidgets/common/font.py
 FluentWidgets/common/splitter.py
 FluentWidgets/common/system_tray_icon.py
+FluentWidgets/common/theme.py
 FluentWidgets/common/tool_info.py
 FluentWidgets/components/__init__.py
 FluentWidgets/components/layout/__init__.py

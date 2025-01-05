@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pmutils
-Version: 0.0.4
+Version: 0.0.5
 Author: Mikuas
 Author-email: email@example.com
 Requires-Dist: pyautogui

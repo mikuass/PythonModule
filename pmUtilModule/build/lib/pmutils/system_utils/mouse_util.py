@@ -4,8 +4,7 @@ import pyautogui
 
 class MouseUtils:
 
-    @staticmethod
-    def getMousePosition():
+    def getMousePosition(self):
         """ get mouse position """
         return pyautogui.position()
 

@@ -8,8 +8,7 @@ from pycaw.utils import AudioUtilities
 
 
 class VolumeUtil:
-    @staticmethod
-    def getVolumeInterface():
+    def getVolumeInterface(self):
         """ get volume interface"""
         try:
             devices = AudioUtilities.GetSpeakers()

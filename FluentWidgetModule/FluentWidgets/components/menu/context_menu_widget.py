@@ -1,9 +1,10 @@
 # coding:utf-8
-from typing import Union
+from typing import Union, List
 
 from PySide6.QtCore import QPoint
 from PySide6.QtGui import QColor, QActionGroup, QIcon, QShortcut, QKeySequence
 from PySide6.QtWidgets import QWidget
+
 from qfluentwidgets import (
     RoundMenu, Action, AvatarWidget, BodyLabel, CaptionLabel, setFont, HyperlinkButton, CheckableMenu,
     MenuIndicatorType, FluentIconBase
@@ -21,7 +22,7 @@ class MenuBase:
         self._menu.addAction(action)
         return self
 
-    def addActions(self, actions: list[Action]):
+    def addActions(self, actions: List[Action]):
         for action in actions:
             self.addAction(action)
         return self
@@ -32,7 +33,7 @@ class MenuBase:
         self._menu.addAction(action)
         return action
 
-    def addItems(self, icon: list[Union[QIcon, str, FluentIconBase]], text: list[str]):
+    def addItems(self, icon: List[Union[QIcon, str, FluentIconBase]], text: List[str]):
         """ add items to _menu"""
         actions = []
         for icon, text in zip(icon, text):
@@ -57,10 +58,10 @@ class MenuBase:
             self,
             title: str,
             icon: Union[QIcon, str, FluentIconBase],
-            text: list[str],
-            subIcon: list[Union[QIcon, str, FluentIconBase]],
+            text: List[str],
+            subIcon: List[Union[QIcon, str, FluentIconBase]],
             parentMenu: RoundMenu = None,
-    ) -> list[Action]:
+    ) -> List[Action]:
         """ parentMenu is None, default = self._menu """
         actions = []
         self._createSubMenu(icon, title, parentMenu).addMenu(self._subMenu)
@@ -98,7 +99,7 @@ class MenuBase:
             self,
             icon: Union[QIcon, str, FluentIconBase],
             title: str,
-            actions: list[Action],
+            actions: List[Action],
             parentMenu: RoundMenu = None
     ):
         """ parentMenu is None, default = self._menu """
@@ -145,7 +146,7 @@ class MenuBase:
         return action
 
     @staticmethod
-    def setClickedSlots(actions: list[Action], function: list):
+    def setClickedSlots(actions: List[Action], function: list):
         for action, fc in zip(actions, function):
             action.triggered.connect(fc)
         return actions
@@ -155,7 +156,7 @@ class MenuBase:
         action.setShortcut(QKeySequence(key))
         return self
 
-    def setShortcuts(self, actions: list[Action], keys: list[str]):
+    def setShortcuts(self, actions: List[Action], keys: List[str]):
         for action, key in zip(actions, keys):
             action.setShortcut(key)
         return self
@@ -270,7 +271,7 @@ class CheckedMenu(MenuBase):
         self._menu.addAction(action)
         return action
 
-    def addItems(self, icons: list[Union[QIcon, str, FluentIconBase]], texts: list[str]):
+    def addItems(self, icons: list[Union[QIcon, str, FluentIconBase]], texts: List[str]):
         actions = []
         for text, icon in zip(texts, icons):
             actions.append(self.addItem(icon, text))
@@ -295,8 +296,8 @@ class CheckedMenu(MenuBase):
             self,
             title: str,
             icon: Union[QIcon, str, FluentIconBase],
-            text: list[str],
-            subIcon: list[Union[QIcon, str, FluentIconBase]],
+            text: List[str],
+            subIcon: List[Union[QIcon, str, FluentIconBase]],
             parentMenu: CheckableMenu = None,
             indicatorType: MenuIndicatorType = MenuIndicatorType.RADIO
     ) -> list[Action]:
@@ -353,7 +354,7 @@ class Shortcut:
         shortcut.activated.connect(function)
         return self
 
-    def addShortcuts(self, keys: list[str], parent: QWidget, functions: list):
+    def addShortcuts(self, keys: List[str], parent: QWidget, functions: list):
         for key, fc in zip(keys, functions):
             self.addShortcut(key, parent, fc)
         return self

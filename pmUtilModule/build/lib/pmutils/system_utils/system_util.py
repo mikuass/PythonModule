@@ -6,8 +6,7 @@ import wmi
 
 
 class SystemUtils:
-    @staticmethod
-    def getEnv(key: str = None):
+    def getEnv(self, key: str = None):
         """ get environment variables """
         if key is None:
             return os.environ
@@ -17,32 +16,26 @@ class SystemUtils:
             except KeyError:
                 return None
 
-    @staticmethod
-    def bytesToGb(size: int | float, number=2):
+    def bytesToGb(self, size: int | float, number=2):
         return f"{size / (1024 ** 3):.{number}f}GB"
 
-    @staticmethod
-    def getCupCount(logical=True):
+    def getCupCount(self, logical=True):
         """ get cup count """
         return psutil.cpu_count(logical)
 
-    @staticmethod
-    def getMemoryUsedPercent():
+    def getMemoryUsedPercent(self):
         """ get memory percent """
         return f"{psutil.virtual_memory().percent}%"
 
-    @staticmethod
-    def getCpuPercent(interval=1.0):
+    def getCpuPercent(self, interval=1.0):
         """ get cpu percent """
         return f"{psutil.cpu_percent(interval)}%"
 
-    @staticmethod
-    def getPasteContent():
+    def getPasteContent(self):
         """ get paste content """
         return pyperclip.paste()
 
-    @staticmethod
-    def getScreenDevice():
+    def getScreenDevice(self):
         return wmi.WMI(namespace='wmi').WmiMonitorBrightnessMethods()
 
     def setScreenBrightness(self, brightness: int):

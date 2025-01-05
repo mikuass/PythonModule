@@ -1,6 +1,7 @@
 # coding:utf-8
 from PySide6.QtCore import QSize, Signal, QFileInfo, Qt
 from PySide6.QtWidgets import QFileDialog, QFrame, QLabel
+
 from qfluentwidgets import HyperlinkButton
 
 from ..layout import VBoxLayout
@@ -12,8 +13,9 @@ class DragFolderWidget(QFrame):
     draggedChange = Signal(list)
     selectionChange = Signal(list)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, defaultDir="./"):
         super().__init__(parent)
+        self.defaultDir = defaultDir
         self.vBoxLayout = VBoxLayout(self)
         self.setAcceptDrops(True)
         self.setMinimumSize(QSize(256, 200))
@@ -31,7 +33,7 @@ class DragFolderWidget(QFrame):
         self.setBorderColor('skyblue')
 
     def _showDialog(self):
-        return self.selectionChange.emit([QFileDialog.getExistingDirectory(self, "选择文件夹")])
+        return self.selectionChange.emit([QFileDialog.getExistingDirectory(self, "选择文件夹", self.defaultDir)])
 
     def setLabelText(self, text):
         self.label.setText(text)

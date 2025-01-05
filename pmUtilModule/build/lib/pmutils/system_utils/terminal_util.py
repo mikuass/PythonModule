@@ -4,10 +4,16 @@ import subprocess
 
 class TerminalUtils:
 
-    @staticmethod
-    def createTerminalArgs(args: list[str], types: list | str = str, helpInfo: list = None,
-                           isRequired: list[bool] = False, defaultValue: list = None,
-                           consts: list = None, description='GetTerminalArgs'):
+    def createTerminalArgs(
+            self,
+            args: list[str],
+            types: list | str = str,
+            helpInfo: list = None,
+            isRequired: list[bool] = False,
+            defaultValue: list = None,
+            consts: list = None, description='GetTerminalArgs'
+    ):
+        """ create terminal args """
         parser = argparse.ArgumentParser(description=description)
         length = len(args)
         __args = args
@@ -18,19 +24,20 @@ class TerminalUtils:
         isRequired = isRequired if isRequired else [False] * length
         consts = consts if consts is not None else [None] * length
         for _, __, tp, info, value, required, const in zip(_args, __args, types, helpInfo,
-                                                           defaultValue, isRequired,consts):
+                                                           defaultValue, isRequired, consts):
             if tp is list:
                 parser.add_argument(f'-{_}', f'--{__}', nargs='+',
-                                    help=info, default=value,required=required)
+                                    help=info, default=value, required=required)
             elif const is not None:
                 parser.add_argument(f'-{_}', f'--{__}', nargs='?',
-                                    const=const, help=info, default=value,required=required)
+                                    const=const, help=info, default=value, required=required)
             else:
-                parser.add_argument(f'-{_}', f'--{__}', help=info, default=value, required=required)
+                parser.add_argument(f'-{_}', f'--{__}', help=info,
+                                    default=value, required=required)
         return parser.parse_args()
 
-    @staticmethod
-    def runTerminalCommand(element, asynchronous=False):
+    def runTerminalCommand(self, element, asynchronous=False):
+        """ run terminal command """
         if asynchronous:
             processes = []
             proc = subprocess.Popen(element)

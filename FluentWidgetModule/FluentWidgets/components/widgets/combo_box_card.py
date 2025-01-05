@@ -1,8 +1,9 @@
 # coding:utf-8
-from typing import Union
+from typing import Union, List
 
 from PySide6.QtGui import Qt, QIcon
 from PySide6.QtWidgets import QWidget
+
 from qfluentwidgets import ComboBox, EditableComboBox, OptionsConfigItem, OptionsValidator, OptionsSettingCard, \
     ConfigItem, FluentIconBase, FolderListValidator
 
@@ -19,7 +20,7 @@ class ComboBoxCardBase(CardBase):
             content,
             parent=None,
             noSelected=False,
-            items: list[str] = None,
+            items: List[str] = None,
             info: str = None
     ):
         super().__init__()
@@ -66,7 +67,7 @@ class OptionsCardBase(OptionsSettingCard):
             icon: Union[QIcon, str, FluentIconBase] = None,
             title: str = None,
             content: str = None,
-            items: list[str] = None,
+            items: List[str] = None,
             defaultValue: str = None,
             parent: QWidget = None
     ):

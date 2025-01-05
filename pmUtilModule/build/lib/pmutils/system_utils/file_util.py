@@ -4,58 +4,47 @@ import shutil
 
 
 class FileUtils:
-    @staticmethod
-    def getDirFile(path: str):
+    def getDirFile(self, path: str):
         """ get directory all files|directory """
         return os.listdir(path)
 
-    @staticmethod
-    def isDir(path: str):
+    def isDir(self, path: str):
         """ check whether is directory """
         return os.path.isdir(path)
 
-    @staticmethod
-    def getAbsPath(path: str):
+    def getAbsPath(self, path: str):
         """ get absolute path from path """
         return os.path.abspath(path)
 
-    @staticmethod
-    def getBaseName(path: str):
+    def getBaseName(self, path: str):
         """ get file dir name """
         return os.path.basename(path)
 
-    @staticmethod
-    def getDirName(path: str):
+    def getDirName(self, path: str):
         """ get dir name """
         return os.path.dirname(path)
 
-    @staticmethod
-    def joinPath(p1: str, p2: str):
+    def joinPath(self, p1: str, p2: str):
         """ stitching path """
         return os.path.join(p1, p2)
 
-    @staticmethod
-    def getFileName(path: str):
+    def getFileName(self, path: str):
         """ get file name, not contains suffix"""
         return os.path.splitext(path)[0]
 
-    @staticmethod
-    def getFileSuffixName(path: str):
+    def getFileSuffixName(self, path: str):
         """ get file suffix name"""
         return os.path.splitext(path)[1].replace('.', '')
 
-    @staticmethod
-    def exist(path: str):
+    def exist(self, path: str):
         return os.path.exists(path)
 
-    @staticmethod
-    def readFile(path: str):
+    def readFile(self, path: str):
         """ read file """
         with open(path, 'r', encoding='utf-8') as f:
             return f.read()
 
-    @staticmethod
-    def readFiles(path: list[str]):
+    def readFiles(self, path: list[str]):
         """ read files """
         result = []
         for path in path:

@@ -13,6 +13,7 @@ class TerminalUtils:
             defaultValue: list = None,
             consts: list = None, description='GetTerminalArgs'
     ):
+        """ create terminal args """
         parser = argparse.ArgumentParser(description=description)
         length = len(args)
         __args = args
@@ -36,6 +37,7 @@ class TerminalUtils:
         return parser.parse_args()
 
     def runTerminalCommand(self, element, asynchronous=False):
+        """ run terminal command """
         if asynchronous:
             processes = []
             proc = subprocess.Popen(element)
