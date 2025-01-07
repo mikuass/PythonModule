@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='FluentWidgets',
-    version='0.0.3',
+    version='0.0.4',
     author='Mikuas',
     author_email="email@example.com",
     packages=find_packages(),

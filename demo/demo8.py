@@ -1,7 +1,7 @@
 from FluentWidgets import VerticalScrollWidget, LeftPopDrawerWidget, RightPopDrawerWidget, TopPopDrawerWidget, \
     BottomPopDrawerWidget
 from PySide6.QtWidgets import QApplication
-from qfluentwidgets import PrimaryPushButton, setTheme, Theme
+from qfluentwidgets import PrimaryPushButton, setTheme, Theme, InfoBar
 
 
 class Window(VerticalScrollWidget):
