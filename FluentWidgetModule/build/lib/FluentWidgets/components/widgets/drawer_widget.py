@@ -83,17 +83,15 @@ class PopDrawerWidgetBase(QFrame):
             self.__dockAnimation(x, y)
         QTimer.singleShot(self.duration, lambda: self.setVisible(False))
 
-    def setBackgroundColor(self, color: QColor):
-        self.setBackgroundColor(color)
-        self.update()
-
-    def setRoundRidust(self, xRadius: int, yRadius: int):
+    def setRoundRadius(self, xRadius: int, yRadius: int):
         self.__xRadius = xRadius
         self.__yRadius = yRadius
+        self.update()
 
     def setBackgroundColor(self, lightColor: QColor, darkColor: QColor):
         self.__lightBgcColor = lightColor
         self.__darkBgcColor = darkColor
+        self.update()
 
     def getBackgroundColor(self):
         if qconfig.theme == Theme.DARK:

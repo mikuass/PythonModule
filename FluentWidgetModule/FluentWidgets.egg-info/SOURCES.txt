@@ -30,6 +30,7 @@ FluentWidgets/components/widgets/drag_widget.py
 FluentWidgets/components/widgets/drawer_widget.py
 FluentWidgets/components/widgets/expand_group_card.py
 FluentWidgets/components/widgets/folder_card.py
+FluentWidgets/components/widgets/info_bar.py
 FluentWidgets/components/widgets/list_widget.py
 FluentWidgets/components/widgets/page_widget.py
 FluentWidgets/components/widgets/pips_pager.py

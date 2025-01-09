@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: FluentWidgets
-Version: 0.0.3
+Version: 0.0.4
 Author: Mikuas
 Author-email: email@example.com
 Requires-Dist: PySide6>=6.4.2

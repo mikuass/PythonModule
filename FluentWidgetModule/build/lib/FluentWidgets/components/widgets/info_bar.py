@@ -1,0 +1,270 @@
+# coding:utf-8
+from enum import Enum
+
+from PySide6.QtCore import Qt, QSize, QPropertyAnimation, QPoint, QTimer, QObject
+from PySide6.QtGui import QPainter, QColor
+from PySide6.QtWidgets import QFrame,  QGraphicsOpacityEffect, QWidget
+from qfluentwidgets import BodyLabel, TransparentToolButton, FluentIcon, SubtitleLabel, setTheme, Theme, qconfig
+
+from ...components import VBoxLayout, HBoxLayout
+
+
+class ToastInfoBarColor(Enum):
+    """ toast infoBar color """
+    SUCCESS = '#4CAF50'
+    ERROR = '#D32F2F'
+    WARNING = '#FFEB3B'
+    INFO = '#2196F3'
+
+    def __new__(cls, color):
+        obj = object.__new__(cls)
+        obj.color = QColor(color)
+        return obj
+
+    @property
+    def value(self):
+        return self.color
+
+
+class ToastInfoBarPosition(Enum):
+    """ toast infoBar position """
+    TOP = 0
+    TOP_LEFT = 1
+    TOP_RIGHT = 2
+    BOTTOM = 3
+    BOTTOM_LEFT = 4
+    BOTTOM_RIGHT = 5
+
+
+class ToastInfoBar(QFrame):
+    """ toast infoBar """
+    def __init__(
+            self,
+            parent,
+            title: str,
+            content: str,
+            duration=2000,
+            isClosable=True,
+            position=ToastInfoBarPosition.TOP_LEFT,
+            toastColor=ToastInfoBarColor.SUCCESS
+    ):
+        super().__init__(parent)
+        setTheme(Theme.AUTO)
+        self.setMinimumSize(200, 60)
+        self.duration = duration
+        self.toastColor = toastColor
+
+        self.opacityEffect = QGraphicsOpacityEffect(self)
+        self.opacityEffect.setOpacity(1)
+        self.setGraphicsEffect(self.opacityEffect)
+
+        self.vBoxLayout = VBoxLayout(self)
+        self.hBoxLayout = HBoxLayout()
+        self.hBoxLayout.setSpacing(50)
+        self.vBoxLayout.addLayout(self.hBoxLayout)
+
+        self.title = SubtitleLabel(title, self)
+        self.closeButton = TransparentToolButton(FluentIcon.CLOSE, self)
+        self.content = BodyLabel(content, self)
+
+        self.closeButton.setIconSize(QSize(15, 15))
+        self.closeButton.setVisible(isClosable)
+        self.closeButton.clicked.connect(self.__createOpacityAni)
+
+        self.hBoxLayout.addWidget(self.title, 1, alignment=Qt.AlignmentFlag.AlignLeft)
+        self.hBoxLayout.addWidget(self.closeButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
+        self.vBoxLayout.addWidget(self.content)
+
+        self.startPosition, self.endPosition = ToastInfoBarManager.get(position, self)
+
+    def adjustSize(self):
+        super().adjustSize()
+        self.closeButton.adjustSize()
+
+    def getBackgroundColor(self):
+        self.backgroundColor = QColor('#202020') if qconfig.theme == Theme.DARK else QColor('#ECECEC')
+        return self.backgroundColor
+
+    def setBackgroundColor(self, color: QColor):
+        self.backgroundColor = color
+
+    def __createPosAni(self):
+        self.__geometryAni = QPropertyAnimation(self, b'pos')
+        self.__geometryAni.setDuration(200)
+        self.__geometryAni.setStartValue(self.startPosition)
+        self.__geometryAni.setEndValue(self.endPosition)
+        self.__geometryAni.start()
+
+    def __createOpacityAni(self):
+        self.__opacityAni = QPropertyAnimation(self.opacityEffect, b'opacity')
+        self.__opacityAni.setDuration(300)
+        self.__opacityAni.setStartValue(1)
+        self.__opacityAni.setEndValue(0)
+        self.__opacityAni.start()
+        self.__opacityAni.finished.connect(self.hide)
+
+    @classmethod
+    def new(
+            cls,
+            parent: QWidget,
+            title: str,
+            content: str,
+            isClosable=True,
+            duration=2000,
+            position=ToastInfoBarPosition.TOP_RIGHT,
+            toastColor=ToastInfoBarColor.SUCCESS
+    ):
+        ToastInfoBar(parent, title, content, duration, isClosable, position, toastColor).show()
+
+    @classmethod
+    def success(
+            cls, parent: QWidget, title: str, content: str,
+            isClosable=True, duration=2000, position=ToastInfoBarPosition.TOP_RIGHT
+    ):
+        cls.new(parent, title, content, isClosable, duration, position, ToastInfoBarColor.SUCCESS.value)
+
+    @classmethod
+    def error(
+            cls, parent: QWidget, title: str, content: str,
+            isClosable=True, duration=-1, position=ToastInfoBarPosition.TOP_RIGHT
+    ):
+        cls.new(parent, title, content, isClosable, duration, position, ToastInfoBarColor.ERROR.value)
+
+    @classmethod
+    def warning(
+            cls, parent: QWidget, title: str, content: str,
+            isClosable=True, duration=2000, position=ToastInfoBarPosition.TOP_RIGHT
+    ):
+        cls.new(parent, title, content, isClosable, duration, position, ToastInfoBarColor.WARNING.value)
+
+    @classmethod
+    def info(
+            cls, parent: QWidget, title: str, content: str,
+            isClosable=True, duration=2000, position=ToastInfoBarPosition.TOP_RIGHT
+    ):
+        cls.new(parent, title, content, isClosable, duration, position, ToastInfoBarColor.INFO.value)
+
+    @classmethod
+    def custom(
+            cls, parent: QWidget, title: str, content: str, toastColor: QColor,
+            isClosable=True, duration=2000, position=ToastInfoBarPosition.TOP_RIGHT
+    ):
+        cls.new(parent, title, content, isClosable, duration, position, toastColor)
+
+    def hide(self):
+        super().hide()
+        self.deleteLater()
+
+    def show(self):
+        self.setVisible(True)
+        self.__createPosAni()
+        QTimer.singleShot(self.duration, self.__createOpacityAni)
+
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        topPainter = QPainter(self)
+        topPainter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        topPainter.setPen(Qt.PenStyle.NoPen)
+        topPainter.setBrush(self.toastColor)
+        topPainter.drawRoundedRect(0, 0, self.width() - 0.1, self.height(), 8, 8)
+
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(self.getBackgroundColor())
+        painter.drawRoundedRect(0, 5, self.width(), self.height() - 5, 6, 6)
+
+
+class ToastInfoBarManager(QObject):
+    """ ToastInfoBar manager """
+    registry = {}
+
+    def __init__(self):
+        super().__init__()
+        self.margin = 24
+
+    @classmethod
+    def register(cls, operationEnum):
+        def decorator(classType):
+            cls.registry[operationEnum] = classType
+            return classType
+        return decorator
+
+    @classmethod
+    def get(cls, operation, infoBar: ToastInfoBar):
+        operationClass = cls.registry.get(operation)
+        if operationClass:
+            operationInstance = operationClass()
+            return operationInstance.getPos(infoBar)
+        else:
+            raise ValueError(f"No operation registered for {operation}")
+
+    def getPos(self, infoView: QWidget):
+        raise NotImplementedError
+
+
+@ToastInfoBarManager.register(ToastInfoBarPosition.TOP)
+class TopToastInfoBarManager(ToastInfoBarManager):
+
+    def getPos(self, infoBar):
+        parent = infoBar.parent()
+        infoBar.adjustSize()
+        x = (parent.width() - infoBar.width() / 1.3) / 2
+        return QPoint(x, -infoBar.height()), QPoint(x, 24)
+
+
+@ToastInfoBarManager.register(ToastInfoBarPosition.TOP_LEFT)
+class TopLeftToastInfoBarManager(ToastInfoBarManager):
+
+    def getPos(self, infoBar):
+        infoBar.adjustSize()
+        return QPoint(-infoBar.width(), 24), QPoint(24, 24)
+
+
+@ToastInfoBarManager.register(ToastInfoBarPosition.TOP_RIGHT)
+class TopRightToastInfoBarManager(ToastInfoBarManager):
+
+    def getPos(self, infoBar):
+        parent = infoBar.parent()
+        infoBar.adjustSize()
+        x = parent.width()
+        infoX = infoBar.width()
+        return QPoint(x + infoX, 24), QPoint(x - infoX - self.margin, 24)
+
+
+@ToastInfoBarManager.register(ToastInfoBarPosition.BOTTOM)
+class BottomToastInfoBarManager(ToastInfoBarManager):
+
+    def getPos(self, infoBar):
+        parent = infoBar.parent()
+        infoBar.adjustSize()
+        x = (parent.width() - infoBar.width() / 1.3) / 2
+        y = parent.height()
+        infoViewY = infoBar.height()
+        return QPoint(x, y - infoViewY), QPoint(x, y - infoViewY - self.margin)
+
+
+@ToastInfoBarManager.register(ToastInfoBarPosition.BOTTOM_LEFT)
+class BottomLeftToastInfoBarManager(ToastInfoBarManager):
+
+    def getPos(self, infoBar):
+        parent = infoBar.parent()
+        infoBar.adjustSize()
+        y = parent.height()
+        infoViewX = infoBar.width()
+        infoViewY = infoBar.height()
+        return QPoint(-infoViewX, y - infoViewY - self.margin), QPoint(24, y - infoViewY - self.margin)
+
+
+@ToastInfoBarManager.register(ToastInfoBarPosition.BOTTOM_RIGHT)
+class BottomRightToastInfoBarManager(ToastInfoBarManager):
+
+    def getPos(self, infoBar):
+        parent = infoBar.parent()
+        infoBar.adjustSize()
+        x = parent.width()
+        y = parent.height()
+        infoViewX = infoBar.width()
+        infoViewY = infoBar.height()
+        y = y - infoViewY - self.margin
+        return QPoint(x + infoViewX, y), QPoint(x - infoViewX - self.margin, y)
