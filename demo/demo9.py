@@ -18,17 +18,9 @@ class DrawerWidget(QWidget):
         self.drawer = widget(parent)
 
         self.button = PrimaryPushButton(title, self)
-        self.button.clicked.connect(self.drawer.showDrawer)
+        self.button.clicked.connect(self.drawer.show)
 
         self.vBoxLayout.addWidget(self.button)
-
-    def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-        self.drawer.hideDrawer()
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.drawer.resizeEvent(event)
 
 
 class VSplitter(VerticalSplitter):

@@ -1,7 +1,7 @@
 # coding:utf-8
 from enum import Enum
 
-from PySide6.QtCore import Qt, QSize, QPropertyAnimation, QPoint, QTimer, QObject
+from PySide6.QtCore import Qt, QSize, QPropertyAnimation, QPoint, QTimer, QObject, QEvent
 from PySide6.QtGui import QPainter, QColor
 from PySide6.QtWidgets import QFrame,  QGraphicsOpacityEffect, QWidget
 from qfluentwidgets import BodyLabel, TransparentToolButton, FluentIcon, SubtitleLabel, setTheme, Theme, qconfig
@@ -12,7 +12,7 @@ from ...components import VBoxLayout, HBoxLayout
 class ToastInfoBarColor(Enum):
     """ toast infoBar color """
     SUCCESS = '#4CAF50'
-    ERROR = '#D32F2F'
+    ERROR = '#FF5733'
     WARNING = '#FFEB3B'
     INFO = '#2196F3'
 
@@ -50,9 +50,11 @@ class ToastInfoBar(QFrame):
     ):
         super().__init__(parent)
         setTheme(Theme.AUTO)
+        self.parent().installEventFilter(self)
         self.setMinimumSize(200, 60)
         self.duration = duration
         self.toastColor = toastColor
+        self.position = position
 
         self.opacityEffect = QGraphicsOpacityEffect(self)
         self.opacityEffect.setOpacity(1)
@@ -75,7 +77,7 @@ class ToastInfoBar(QFrame):
         self.hBoxLayout.addWidget(self.closeButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
         self.vBoxLayout.addWidget(self.content)
 
-        self.startPosition, self.endPosition = ToastInfoBarManager.get(position, self)
+        self.startPosition, self.endPosition = ToastInfoBarManager.get(self.position, self)
 
     def adjustSize(self):
         super().adjustSize()
@@ -109,8 +111,8 @@ class ToastInfoBar(QFrame):
             parent: QWidget,
             title: str,
             content: str,
-            isClosable=True,
             duration=2000,
+            isClosable=True,
             position=ToastInfoBarPosition.TOP_RIGHT,
             toastColor=ToastInfoBarColor.SUCCESS
     ):
@@ -119,41 +121,46 @@ class ToastInfoBar(QFrame):
     @classmethod
     def success(
             cls, parent: QWidget, title: str, content: str,
-            isClosable=True, duration=2000, position=ToastInfoBarPosition.TOP_RIGHT
+            duration=2000, isClosable=True, position=ToastInfoBarPosition.TOP_RIGHT
     ):
-        cls.new(parent, title, content, isClosable, duration, position, ToastInfoBarColor.SUCCESS.value)
+        cls.new(parent, title, content, duration, isClosable, position, ToastInfoBarColor.SUCCESS.value)
 
     @classmethod
     def error(
             cls, parent: QWidget, title: str, content: str,
-            isClosable=True, duration=-1, position=ToastInfoBarPosition.TOP_RIGHT
+            duration=-1, isClosable=True, position=ToastInfoBarPosition.TOP_RIGHT
     ):
-        cls.new(parent, title, content, isClosable, duration, position, ToastInfoBarColor.ERROR.value)
+        cls.new(parent, title, content, duration, isClosable, position, ToastInfoBarColor.ERROR.value)
 
     @classmethod
     def warning(
             cls, parent: QWidget, title: str, content: str,
-            isClosable=True, duration=2000, position=ToastInfoBarPosition.TOP_RIGHT
+            duration=2000, isClosable=True, position=ToastInfoBarPosition.TOP_RIGHT
     ):
-        cls.new(parent, title, content, isClosable, duration, position, ToastInfoBarColor.WARNING.value)
+        cls.new(parent, title, content, duration, isClosable, position, ToastInfoBarColor.WARNING.value)
 
     @classmethod
     def info(
             cls, parent: QWidget, title: str, content: str,
-            isClosable=True, duration=2000, position=ToastInfoBarPosition.TOP_RIGHT
+            duration=2000, isClosable=True, position=ToastInfoBarPosition.TOP_RIGHT
     ):
-        cls.new(parent, title, content, isClosable, duration, position, ToastInfoBarColor.INFO.value)
+        cls.new(parent, title, content, duration, isClosable, position, ToastInfoBarColor.INFO.value)
 
     @classmethod
     def custom(
             cls, parent: QWidget, title: str, content: str, toastColor: QColor,
-            isClosable=True, duration=2000, position=ToastInfoBarPosition.TOP_RIGHT
+            duration=2000, isClosable=True, position=ToastInfoBarPosition.TOP_RIGHT
     ):
-        cls.new(parent, title, content, isClosable, duration, position, toastColor)
+        cls.new(parent, title, content, duration, isClosable, position, toastColor)
 
     def hide(self):
         super().hide()
         self.deleteLater()
+
+    def eventFilter(self, obj, event):
+        if obj is self.parent() and event.type() == QEvent.Type.Resize:
+            self.move(ToastInfoBarManager.get(self.position, self)[1])
+        return super().eventFilter(obj, event)
 
     def show(self):
         self.setVisible(True)
@@ -175,12 +182,21 @@ class ToastInfoBar(QFrame):
         painter.drawRoundedRect(0, 5, self.width(), self.height() - 5, 6, 6)
 
 
-class ToastInfoBarManager(QObject):
+class ToastInfoBarManager:
     """ ToastInfoBar manager """
+    _instances = {}
     registry = {}
 
+    def __new__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super().__new__(cls, *args, **kwargs)
+        return cls._instances[cls]
+
     def __init__(self):
+        if not hasattr(self, "_initialized"):
+            self._initialized = True
         super().__init__()
+        self.spacing = 16
         self.margin = 24
 
     @classmethod
@@ -191,15 +207,15 @@ class ToastInfoBarManager(QObject):
         return decorator
 
     @classmethod
-    def get(cls, operation, infoBar: ToastInfoBar):
-        operationClass = cls.registry.get(operation)
-        if operationClass:
-            operationInstance = operationClass()
-            return operationInstance.getPos(infoBar)
-        else:
+    def get(cls, operation):
+        if operation not in cls.registry:
             raise ValueError(f"No operation registered for {operation}")
+        return cls.registry[operation]()
 
     def getPos(self, infoView: QWidget):
+        raise NotImplementedError
+
+    def print(self):
         raise NotImplementedError
 
 
@@ -219,7 +235,6 @@ class TopLeftToastInfoBarManager(ToastInfoBarManager):
     def getPos(self, infoBar):
         infoBar.adjustSize()
         return QPoint(-infoBar.width(), 24), QPoint(24, 24)
-
 
 @ToastInfoBarManager.register(ToastInfoBarPosition.TOP_RIGHT)
 class TopRightToastInfoBarManager(ToastInfoBarManager):

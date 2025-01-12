@@ -1,7 +1,10 @@
 from FluentWidgets import VerticalScrollWidget, LeftPopDrawerWidget, RightPopDrawerWidget, TopPopDrawerWidget, \
     BottomPopDrawerWidget
+from PySide6.QtCore import QEasingCurve
 from PySide6.QtWidgets import QApplication
-from qfluentwidgets import PrimaryPushButton, setTheme, Theme, InfoBar
+from qfluentwidgets import PrimaryPushButton, setTheme, Theme, InfoBar, FluentIcon
+
+from PythonModule.FluentWidgetModule.FluentWidgets import PrimaryButtonCard
 
 
 class Window(VerticalScrollWidget):
@@ -12,30 +15,18 @@ class Window(VerticalScrollWidget):
         self.resize(850, 600)
         self.drawerWidgets = []
         self.initWidget()
-        self.connectSignalSlot()
 
     def initWidget(self):
         widgets = [LeftPopDrawerWidget, RightPopDrawerWidget, TopPopDrawerWidget, BottomPopDrawerWidget]
         for widget in widgets:
-            drawer = widget(self)
+            drawer = widget(self, '', 500, QEasingCurve.Type.InBack)
             button = PrimaryPushButton(f'Show Drawer', drawer)
-            button.clicked.connect(drawer.showDrawer)
+            button.clicked.connect(drawer.show)
+
+            drawer.addWidget(PrimaryButtonCard(FluentIcon.INFO, 'Title', 'Content', "确定"))
+
             self.vBoxLayout.addWidget(button)
             self.drawerWidgets.append(drawer)
-
-    def connectSignalSlot(self):
-        pass
-
-    def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-        for drawer in self.drawerWidgets:
-            drawer.hideDrawer()
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        for drawer in self.drawerWidgets:
-            drawer.resizeEvent(event)
-            drawer.hideDrawer()
 
 
 if __name__ == '__main__':

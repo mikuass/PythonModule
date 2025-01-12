@@ -1,12 +1,12 @@
 # coding:utf-8
 from enum import Enum
 
-from PySide6.QtCore import Qt, QSize, QPropertyAnimation, QPoint, QTimer, QObject, QEvent
+from PySide6.QtCore import Qt, QSize, QPropertyAnimation, QPoint, QTimer, QEvent
 from PySide6.QtGui import QPainter, QColor
 from PySide6.QtWidgets import QFrame,  QGraphicsOpacityEffect, QWidget
 from qfluentwidgets import BodyLabel, TransparentToolButton, FluentIcon, SubtitleLabel, setTheme, Theme, qconfig
 
-from ...components import VBoxLayout, HBoxLayout
+from FluentWidgets import VBoxLayout, HBoxLayout
 
 
 class ToastInfoBarColor(Enum):
@@ -182,12 +182,21 @@ class ToastInfoBar(QFrame):
         painter.drawRoundedRect(0, 5, self.width(), self.height() - 5, 6, 6)
 
 
-class ToastInfoBarManager(QObject):
+class ToastInfoBarManager:
     """ ToastInfoBar manager """
+    _instances = {}
     registry = {}
 
+    def __new__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super().__new__(cls, *args, **kwargs)
+        return cls._instances[cls]
+
     def __init__(self):
+        if not hasattr(self, "_initialized"):
+            self._initialized = True
         super().__init__()
+        self.spacing = 16
         self.margin = 24
 
     @classmethod
@@ -198,15 +207,15 @@ class ToastInfoBarManager(QObject):
         return decorator
 
     @classmethod
-    def get(cls, operation, infoBar: ToastInfoBar):
-        operationClass = cls.registry.get(operation)
-        if operationClass:
-            operationInstance = operationClass()
-            return operationInstance.getPos(infoBar)
-        else:
+    def get(cls, operation, toastInfoBar: ToastInfoBar):
+        if operation not in cls.registry:
             raise ValueError(f"No operation registered for {operation}")
+        return cls.registry[operation]().getPos(toastInfoBar)
 
     def getPos(self, infoView: QWidget):
+        raise NotImplementedError
+
+    def print(self):
         raise NotImplementedError
 
 
@@ -226,7 +235,6 @@ class TopLeftToastInfoBarManager(ToastInfoBarManager):
     def getPos(self, infoBar):
         infoBar.adjustSize()
         return QPoint(-infoBar.width(), 24), QPoint(24, 24)
-
 
 @ToastInfoBarManager.register(ToastInfoBarPosition.TOP_RIGHT)
 class TopRightToastInfoBarManager(ToastInfoBarManager):
