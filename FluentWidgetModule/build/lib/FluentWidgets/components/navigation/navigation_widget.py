@@ -1,7 +1,7 @@
 # coding:utf-8
 from typing import Union, List
 
-from PySide6.QtGui import Qt, QIcon
+from PySide6.QtGui import Qt, QIcon, QPainter, QColor, QPen
 from PySide6.QtWidgets import QWidget
 
 from qfluentwidgets import (
@@ -10,6 +10,8 @@ from qfluentwidgets import (
 )
 
 from ..layout import VBoxLayout, HBoxLayout
+from .navigation_bar import NavigationBar, NavigationItemPosition
+from ..widgets import Widget
 
 
 class NavigationBase(QWidget):
@@ -83,6 +85,13 @@ class PivotNav(NavigationBase):
         self.navigation = Pivot(self)
         self._initLayout()
 
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setPen(QPen(QColor('#2d2d2d'), 1, Qt.SolidLine))
+        painter.drawLine(0, 65, self.width(), 60)
+
 
 class SegmentedNav(PivotNav):
     """ 分段导航 """
@@ -91,6 +100,8 @@ class SegmentedNav(PivotNav):
         self.navigation = SegmentedWidget(self)
         self._initLayout()
 
+    def paintEvent(self, event):
+        pass
 
 class SegmentedToolNav(PivotNav):
     """ 工具导航 """
@@ -121,6 +132,9 @@ class SegmentedToolNav(PivotNav):
         for key, icon, widget in zip(routeKeys, icons, widgets):
             self.addSubInterface(key, widget, icon)
         return self
+
+    def paintEvent(self, event):
+        pass
 
 
 class SegmentedToggleToolNav(SegmentedToolNav):
@@ -181,3 +195,63 @@ class LabelBarWidget(QWidget):
         for key, text, icon, widget in zip(routeKeys, texts, icons, widgets):
             self.addSubTab(key, text, icon, widget)
         return self
+
+
+class SideNavigationWidget(Widget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setContentsMargins(0, 0, 0, 0)
+        self.__widgets = [] # type: List[QWidget]
+        self._widgetLayout = HBoxLayout(self)
+        self.navigationBar = NavigationBar(self)
+        self._stackedWidget = PopUpAniStackedWidget(self)
+
+        self._widgetLayout.setContentsMargins(0, 0, 0, 0)
+        self._widgetLayout.addWidget(self.navigationBar)
+        self._widgetLayout.addWidget(self._stackedWidget)
+
+    def enableReturn(self, enable: bool):
+        self.navigationBar.enableReturn(enable)
+        return self
+
+    def expandNav(self):
+        self.navigationBar.expandNav()
+        return self
+
+    def switchTo(self, widget: QWidget):
+        self._stackedWidget.setCurrentWidget(widget)
+
+    def __addToStackedWidget(self, widget: QWidget):
+        self._stackedWidget.addWidget(widget)
+        self.__widgets.append(widget)
+
+    def addSubInterface(
+            self,
+            routeKey: str,
+            text: str,
+            icon: Union[str, QIcon, FluentIconBase],
+            widget: QWidget,
+            position=NavigationItemPosition.SCROLL
+    ):
+        self.__addToStackedWidget(widget)
+        self.navigationBar.addItem(routeKey, icon, text, False, lambda: self.switchTo(widget), position)
+        return self
+
+    def addSeparator(self, position=NavigationItemPosition.SCROLL):
+        self.navigationBar.addSeparator(position)
+        return self
+
+    def insertSeparator(self, index: int, position=NavigationItemPosition.SCROLL):
+        self.navigationBar.insertSeparator(index, position)
+        return self
+
+    def setCurrentWidget(self, routeKey: str):
+        self.navigationBar.setCurrentItem(routeKey)
+        return self
+
+    def removeWidget(self, routeKey: str):
+        self._stackedWidget.removeWidget(self.navigationBar.getWidget(routeKey))
+        self.navigationBar.removeWidget(routeKey)
+
+    def getAllWidget(self):
+        return self.__widgets

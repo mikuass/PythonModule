@@ -8,6 +8,7 @@ FluentWidgets.egg-info/top_level.txt
 FluentWidgets/_rc/__init__.py
 FluentWidgets/_rc/resources.py
 FluentWidgets/common/__init__.py
+FluentWidgets/common/animation.py
 FluentWidgets/common/fluent_icon.py
 FluentWidgets/common/font.py
 FluentWidgets/common/splitter.py
@@ -20,12 +21,14 @@ FluentWidgets/components/layout/layout.py
 FluentWidgets/components/menu/__init__.py
 FluentWidgets/components/menu/context_menu_widget.py
 FluentWidgets/components/navigation/__init__.py
+FluentWidgets/components/navigation/navigation_bar.py
 FluentWidgets/components/navigation/navigation_widget.py
 FluentWidgets/components/widgets/__init__.py
 FluentWidgets/components/widgets/acrylic_card.py
 FluentWidgets/components/widgets/button_card.py
 FluentWidgets/components/widgets/combo_box_card.py
 FluentWidgets/components/widgets/custom_card.py
+FluentWidgets/components/widgets/custom_widget.py
 FluentWidgets/components/widgets/drag_widget.py
 FluentWidgets/components/widgets/drawer_widget.py
 FluentWidgets/components/widgets/expand_group_card.py

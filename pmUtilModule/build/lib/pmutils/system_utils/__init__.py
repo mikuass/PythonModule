@@ -1,4 +1,3 @@
-from .file_util import FileUtils
 from .keyboard_util import KeyboardUtils
 from .mouse_util import MouseUtils
 from .regedit_util import RegeditUtils

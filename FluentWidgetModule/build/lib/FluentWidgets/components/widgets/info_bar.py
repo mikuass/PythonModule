@@ -182,12 +182,21 @@ class ToastInfoBar(QFrame):
         painter.drawRoundedRect(0, 5, self.width(), self.height() - 5, 6, 6)
 
 
-class ToastInfoBarManager(QObject):
+class ToastInfoBarManager:
     """ ToastInfoBar manager """
+    _instances = {}
     registry = {}
 
+    def __new__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super().__new__(cls, *args, **kwargs)
+        return cls._instances[cls]
+
     def __init__(self):
+        if not hasattr(self, "_initialized"):
+            self._initialized = True
         super().__init__()
+        self.spacing = 16
         self.margin = 24
 
     @classmethod
@@ -198,15 +207,15 @@ class ToastInfoBarManager(QObject):
         return decorator
 
     @classmethod
-    def get(cls, operation, infoBar: ToastInfoBar):
-        operationClass = cls.registry.get(operation)
-        if operationClass:
-            operationInstance = operationClass()
-            return operationInstance.getPos(infoBar)
-        else:
+    def get(cls, operation):
+        if operation not in cls.registry:
             raise ValueError(f"No operation registered for {operation}")
+        return cls.registry[operation]()
 
     def getPos(self, infoView: QWidget):
+        raise NotImplementedError
+
+    def print(self):
         raise NotImplementedError
 
 
@@ -226,7 +235,6 @@ class TopLeftToastInfoBarManager(ToastInfoBarManager):
     def getPos(self, infoBar):
         infoBar.adjustSize()
         return QPoint(-infoBar.width(), 24), QPoint(24, 24)
-
 
 @ToastInfoBarManager.register(ToastInfoBarPosition.TOP_RIGHT)
 class TopRightToastInfoBarManager(ToastInfoBarManager):

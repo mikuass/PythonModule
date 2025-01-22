@@ -4,3 +4,4 @@ from .tool_info import setToolTipInfo, setToolTipInfos
 from .fluent_icon import WinFluentIcon, Icon
 from .splitter import HorizontalSplitter, VerticalSplitter
 from .theme import BackgroundColor
+from .animation import WidgetAnimation, ParallelAnimation, SequentialAnimation

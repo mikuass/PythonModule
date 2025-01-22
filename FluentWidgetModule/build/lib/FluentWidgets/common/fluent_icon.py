@@ -2,9 +2,7 @@
 from enum import Enum
 
 from PySide6.QtGui import QIcon
-
 from qfluentwidgets import Theme, FluentIconBase
-
 from .._rc import resources
 
 

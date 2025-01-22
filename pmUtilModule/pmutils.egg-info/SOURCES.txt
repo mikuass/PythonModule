@@ -5,10 +5,11 @@ pmutils.egg-info/SOURCES.txt
 pmutils.egg-info/dependency_links.txt
 pmutils.egg-info/requires.txt
 pmutils.egg-info/top_level.txt
+pmutils/file_utils/__init__.py
+pmutils/file_utils/file_util.py
 pmutils/json_utlis/__init__.py
 pmutils/json_utlis/json_utlis.py
 pmutils/system_utils/__init__.py
-pmutils/system_utils/file_util.py
 pmutils/system_utils/keyboard_util.py
 pmutils/system_utils/mouse_util.py
 pmutils/system_utils/regedit_util.py

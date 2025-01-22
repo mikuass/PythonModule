@@ -4,7 +4,6 @@ from typing import Union, List
 from PySide6.QtCore import QPoint
 from PySide6.QtGui import QColor, QActionGroup, QIcon, QShortcut, QKeySequence
 from PySide6.QtWidgets import QWidget
-
 from qfluentwidgets import (
     RoundMenu, Action, AvatarWidget, BodyLabel, CaptionLabel, setFont, HyperlinkButton, CheckableMenu,
     MenuIndicatorType, FluentIconBase

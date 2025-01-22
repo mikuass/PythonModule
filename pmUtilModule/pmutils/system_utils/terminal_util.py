@@ -4,8 +4,8 @@ import subprocess
 
 class TerminalUtils:
 
+    @staticmethod
     def createTerminalArgs(
-            self,
             args: list[str],
             types: list | str = str,
             helpInfo: list = None,
@@ -36,7 +36,8 @@ class TerminalUtils:
                                     default=value, required=required)
         return parser.parse_args()
 
-    def runTerminalCommand(self, element, asynchronous=False):
+    @staticmethod
+    def runTerminalCommand(element, asynchronous=False):
         """ run terminal command """
         if asynchronous:
             processes = []

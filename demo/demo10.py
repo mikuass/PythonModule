@@ -14,10 +14,10 @@ class DanLi(QWidget):
         super().__init__()
         self.resize(800, 520)
         self.vBoxLayout = VBoxLayout(self)
-        self.leftDrawer = LeftPopDrawerWidget(self, "左侧弹出抽屉", darkBackgroundColor=QColor('skyblue'))
-        self.rightDrawer = RightPopDrawerWidget(self, "右侧弹出抽屉", darkBackgroundColor=QColor('deepskyblue'))
-        self.topDrawer = TopPopDrawerWidget(self, "顶部弹出抽屉", darkBackgroundColor=QColor('pink'))
-        self.bottomDrawer = BottomPopDrawerWidget(self, "底部弹出抽屉", darkBackgroundColor=QColor('deeppink'))
+        self.leftDrawer = LeftPopDrawerWidget(self, "左侧弹出抽屉")
+        self.rightDrawer = RightPopDrawerWidget(self, "右侧弹出抽屉")
+        self.topDrawer = TopPopDrawerWidget(self, "顶部弹出抽屉")
+        self.bottomDrawer = BottomPopDrawerWidget(self, "底部弹出抽屉")
 
         self.drawers = [self.leftDrawer, self.rightDrawer, self.topDrawer, self.bottomDrawer]
 

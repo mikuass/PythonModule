@@ -1,4 +1,5 @@
 # coding:utf-8
+import weakref
 from enum import Enum
 
 from PySide6.QtCore import Qt, QSize, QPropertyAnimation, QPoint, QTimer, QEvent
@@ -84,7 +85,7 @@ class ToastInfoBar(QFrame):
         self.closeButton.adjustSize()
 
     def getBackgroundColor(self):
-        self.backgroundColor = QColor('#202020') if qconfig.theme == Theme.DARK else QColor('#ECECEC')
+        self.backgroundColor = QColor('#2b2b2b') if qconfig.theme == Theme.DARK else QColor('#fbfbfb')
         return self.backgroundColor
 
     def setBackgroundColor(self, color: QColor):
@@ -167,6 +168,11 @@ class ToastInfoBar(QFrame):
         self.__createPosAni()
         QTimer.singleShot(self.duration, self.__createOpacityAni)
 
+    def showEvent(self, event):
+        super().showEvent(event)
+        manager = ToastInfoBarManager.get(self.position, self)
+        manager.add(self)
+
     def paintEvent(self, event):
         super().paintEvent(event)
         topPainter = QPainter(self)
@@ -198,6 +204,10 @@ class ToastInfoBarManager:
         super().__init__()
         self.spacing = 16
         self.margin = 24
+        self.toastInfoBarAnis = weakref.WeakKeyDictionary()
+
+    def add(self, infoBar: ToastInfoBar):
+        pass
 
     @classmethod
     def register(cls, operationEnum):
@@ -211,6 +221,9 @@ class ToastInfoBarManager:
         if operation not in cls.registry:
             raise ValueError(f"No operation registered for {operation}")
         return cls.registry[operation]().getPos(toastInfoBar)
+
+    def _createAni(self):
+        pass
 
     def getPos(self, infoView: QWidget):
         raise NotImplementedError

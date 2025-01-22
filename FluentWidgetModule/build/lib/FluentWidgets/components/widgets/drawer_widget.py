@@ -13,8 +13,8 @@ class PopDrawerWidgetBase(QFrame):
             self,
             parent,
             title='弹出抽屉',
-            aniType=QEasingCurve.Type.Linear,
             duration=250,
+            aniType=QEasingCurve.Type.Linear,
             width: int = None,
             height: int = None,
             lightBackgroundColor=QColor('#ECECEC'),
@@ -146,8 +146,8 @@ class LeftPopDrawerWidget(PopDrawerWidgetBase):
             self,
             parent,
             title='弹出抽屉',
-            aniType=QEasingCurve.Type.Linear,
             duration=250,
+            aniType=QEasingCurve.Type.Linear,
             width=None,
             height=None,
             lightBackgroundColor=QColor('#ECECEC'),
@@ -157,7 +157,7 @@ class LeftPopDrawerWidget(PopDrawerWidgetBase):
             clickParentHide=True
     ):
         super().__init__(
-            parent, title, aniType, duration, width or 300, height or parent.height(),
+            parent, title, duration, aniType, width or 300, height or parent.height(),
             lightBackgroundColor, darkBackgroundColor, xRadius, yRyRadius, clickParentHide
         )
 
@@ -175,8 +175,8 @@ class RightPopDrawerWidget(PopDrawerWidgetBase):
             self,
             parent,
             title='弹出抽屉',
-            aniType=QEasingCurve.Type.Linear,
             duration=250,
+            aniType=QEasingCurve.Type.Linear,
             width=None,
             height=None,
             lightBackgroundColor=QColor('#ECECEC'),
@@ -186,7 +186,7 @@ class RightPopDrawerWidget(PopDrawerWidgetBase):
             clickParentHide=True
     ):
         super().__init__(
-            parent, title, aniType, duration, width or 300, height or parent.height(),
+            parent, title, duration, aniType, width or 300, height or parent.height(),
             lightBackgroundColor, darkBackgroundColor, xRadius, yRyRadius, clickParentHide
         )
 
@@ -218,8 +218,8 @@ class TopPopDrawerWidget(PopDrawerWidgetBase):
             self,
             parent,
             title='弹出抽屉',
-            aniType=QEasingCurve.Type.Linear,
             duration=250,
+            aniType=QEasingCurve.Type.Linear,
             width=None,
             height=None,
             lightBackgroundColor=QColor('#ECECEC'),
@@ -229,7 +229,7 @@ class TopPopDrawerWidget(PopDrawerWidgetBase):
             clickParentHide=True
     ):
         super().__init__(
-            parent, title, aniType, duration, width or parent.width(), height or 250,
+            parent, title, duration, aniType, width or parent.width(), height or 250,
             lightBackgroundColor, darkBackgroundColor, xRadius, yRyRadius, clickParentHide
         )
 
@@ -257,8 +257,8 @@ class BottomPopDrawerWidget(PopDrawerWidgetBase):
             self,
             parent,
             title='弹出抽屉',
-            aniType=QEasingCurve.Type.Linear,
             duration=250,
+            aniType=QEasingCurve.Type.Linear,
             width=None,
             height=None,
             lightBackgroundColor=QColor('#ECECEC'),
@@ -268,7 +268,7 @@ class BottomPopDrawerWidget(PopDrawerWidgetBase):
             clickParentHide=True
     ):
         super().__init__(
-            parent, title, aniType, duration, width or parent.width(), height or 250,
+            parent, title, duration, aniType, width or parent.width(), height or 250,
             lightBackgroundColor, darkBackgroundColor, xRadius, yRyRadius, clickParentHide
         )
 
