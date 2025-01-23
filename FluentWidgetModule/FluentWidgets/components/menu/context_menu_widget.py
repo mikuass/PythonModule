@@ -168,6 +168,9 @@ class MenuBase:
         self._menu.removeAction()
         return self
 
+    def clear(self):
+        self._menu.clear()
+
 
 class Menu(MenuBase):
     """ 菜单栏组件 """

@@ -6,15 +6,18 @@ from PySide6.QtWidgets import QWidget
 
 from qfluentwidgets import (
     Pivot, SegmentedWidget, SegmentedToolWidget, SegmentedToggleToolWidget, FluentIconBase, TabBar,
-    TabCloseButtonDisplayMode, PopUpAniStackedWidget, setTheme, Theme, HorizontalSeparator
+    TabCloseButtonDisplayMode, PopUpAniStackedWidget, setTheme, Theme, HorizontalSeparator, FluentIcon,
+    TransparentToolButton, Action
 )
 
+from ...common import setToolTipInfo
 from ..layout import VBoxLayout, HBoxLayout
 from .navigation_bar import NavigationBar, NavigationItemPosition
 from ..widgets import Widget
+from ..menu import Menu
 
 
-class NavigationBase(QWidget):
+class NavigationBase(Widget):
     """ 导航组件基类 """
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
@@ -103,6 +106,7 @@ class SegmentedNav(PivotNav):
     def paintEvent(self, event):
         pass
 
+
 class SegmentedToolNav(PivotNav):
     """ 工具导航 """
     def __init__(self, parent=None):
@@ -115,8 +119,7 @@ class SegmentedToolNav(PivotNav):
             self,
             routeKey: str,
             widget: QWidget,
-            icon: Union[QIcon, str, FluentIconBase] = None,
-            *args
+            icon: Union[QIcon, str, FluentIconBase] = None
     ):
         self.stackedWidget.addWidget(widget)
         self.navigation.addItem(routeKey, icon, lambda: self.switchTo(widget))
@@ -125,11 +128,10 @@ class SegmentedToolNav(PivotNav):
     def addSubInterfaces(
             self,
             routeKeys: List[str],
-            icons: List[Union[QIcon, str, FluentIconBase]],
             widgets: List[QWidget],
-            *args
+            icons: List[Union[QIcon, str, FluentIconBase]]
     ):
-        for key, icon, widget in zip(routeKeys, icons, widgets):
+        for key, widget, icon in zip(routeKeys, widgets, icons):
             self.addSubInterface(key, widget, icon)
         return self
 
@@ -146,46 +148,73 @@ class SegmentedToggleToolNav(SegmentedToolNav):
         self.enableNavCenter()
 
 
-class LabelBarWidget(QWidget):
+class LabelBarWidget(Widget):
     """ 标签页组件 """
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.tabBar = TabBar(self)
-        self.stackedWidget = PopUpAniStackedWidget(self)
-        self.hLayout = HBoxLayout(self)
-        self.vLayout = VBoxLayout()
+        self._tabBar = TabBar(self)
+        self._stackedWidget = PopUpAniStackedWidget(self)
+        self._hLayout = HBoxLayout(self)
+        self._vLayout = VBoxLayout()
+        self.__items = [] # type: List[QWidget]
         self.__initLayout()
         self.__initTitleBar()
+        self.enableAddButton(False)
 
     def __initLayout(self):
-        self.hLayout.addLayout(self.vLayout)
-        self.vLayout.addWidgets([self.tabBar, self.stackedWidget])
+        self._hLayout.addLayout(self._vLayout)
+        self._vLayout.addWidgets([self._tabBar, self._stackedWidget])
 
     def __initTitleBar(self):
-        self.tabBar.setTabShadowEnabled(True)
-        self.tabBar.setMovable(True)
-        self.tabBar.setScrollable(True)
-        self.tabBar.setCloseButtonDisplayMode(TabCloseButtonDisplayMode.ON_HOVER)
+        self._tabBar.setTabShadowEnabled(True)
+        self._tabBar.setMovable(True)
+        self._tabBar.setScrollable(True)
+        self._tabBar.setCloseButtonDisplayMode(TabCloseButtonDisplayMode.ON_HOVER)
 
-    def hideAddButton(self):
-        self.tabBar.addButton.hide()
-        return self
+    def setTabShadowEnabled(self, enable: bool):
+        self._tabBar.setTabShadowEnabled(enable)
 
-    def hideCloseButton(self):
-        self.tabBar.setCloseButtonDisplayMode(TabCloseButtonDisplayMode.NEVER)
-        return self
+    def setMovable(self, movable: bool):
+        self._tabBar.setMovable(movable)
+
+    def setScrollable(self, scrollable: bool):
+        self._tabBar.setScrollable(scrollable)
+
+    def setCloseButtonDisplayMode(self, mode: TabCloseButtonDisplayMode):
+        self._tabBar.setCloseButtonDisplayMode(mode)
+
+    def enableClose(self):
+        self._tabBar.tabCloseRequested.connect(lambda index: self.removeWidgetByIndex(index))
+
+
+    def enableAddButton(self, enable: bool):
+        if enable:
+            self._tabBar.addButton.show()
+            return
+        self._tabBar.addButton.hide()
+
+    def setCloseButtonDisplayMode(self, mode=TabCloseButtonDisplayMode.NEVER):
+        self._tabBar.setCloseButtonDisplayMode(mode)
 
     def switchTo(self, widget: QWidget):
-        self.stackedWidget.setCurrentWidget(widget)
+        self._stackedWidget.setCurrentWidget(widget)
 
-    def addSubTab(self, routeKey, text, icon=None, widget: QWidget = None):
-        """ add sub tab, roteKey isUnique """
-        self.stackedWidget.addWidget(widget)
-        self.tabBar.addTab(routeKey, text, icon, lambda: self.switchTo(widget))
-        return self
+    def addSubInterface(
+            self,
+            routeKey: str,
+            text: str,
+            widget: QWidget,
+            icon: Union[QIcon, str, FluentIconBase] = None
+    ):
+        self._stackedWidget.addWidget(widget)
+        self.__items.append(widget)
+        widget.setProperty('text', text)
+        widget.setProperty('routeKey', routeKey)
+        self._tabBar.addTab(routeKey, text, icon, lambda: self.switchTo(widget))
+        return widget
 
-    def addSubTabs(
+    def addSubInterfaces(
             self, routeKeys: List[str],
             texts: List[str],
             widgets: List[QWidget] = None,
@@ -193,8 +222,22 @@ class LabelBarWidget(QWidget):
     ):
         icons = icons if icons is not None else [None for _ in range(len(routeKeys))]
         for key, text, icon, widget in zip(routeKeys, texts, icons, widgets):
-            self.addSubTab(key, text, icon, widget)
-        return self
+            self.addSubInterface(key, text, widget, icon)
+
+    def removeWidgetByIndex(self, index: int):
+        if index > len(self.__items):
+            return
+        item = self.__items.pop(index)
+        self._stackedWidget.removeWidget(item)
+        self._tabBar.removeTab(index)
+        if index > 0:
+            print(True)
+            self._stackedWidget.setCurrentIndex(index - 1)
+
+    def removeWidgetByName(self, widget: QWidget):
+        if widget not in self.__items:
+            return
+        self.removeWidgetByIndex(self.__items.index(widget))
 
 
 class SideNavigationWidget(Widget):

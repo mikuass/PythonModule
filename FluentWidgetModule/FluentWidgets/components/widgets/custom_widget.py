@@ -2,8 +2,8 @@
 
 from PySide6.QtCore import QRectF
 from PySide6.QtGui import QColor, QPainter, Qt, QPainterPath, QImage
-from PySide6.QtWidgets import  QWidget
-from qfluentwidgets import isDarkTheme, Theme, setTheme
+from PySide6.QtWidgets import QWidget
+from qfluentwidgets import isDarkTheme, Theme, setTheme, qconfig
 
 
 class Widget(QWidget):
@@ -14,8 +14,9 @@ class Widget(QWidget):
         self._yRadius = 0
         self._opacity = 1.0
         self._backgroundImg = None # type: QImage | str
-        self._darkColor = QColor(32, 32, 32)
-        self._lightColor = QColor(243, 243, 243)
+        self._darkBackgroundColor = QColor(32, 32, 32)
+        self._lightBackgroundColor = QColor(243, 243, 243)
+        qconfig.themeChanged.connect(self.update)
 
     def setBackgroundImg(self, image: QImage | str = None):
         """ set background image """
@@ -32,20 +33,20 @@ class Widget(QWidget):
         self._yRadius = yRadius
         self.update()
 
-    def setDarkColor(self, color: QColor | str):
-        self._darkColor = QColor(color)
+    def setDarkBackgroundColor(self, color: QColor | str):
+        self._darkBackgroundColor = QColor(color)
         self.update()
 
-    def setLightColor(self, color: QColor | str):
-        self._lightColor = QColor(color)
+    def setLightBackgroundColor(self, color: QColor | str):
+        self._lightBackgroundColor = QColor(color)
         self.update()
 
     def setBackgroundColor(self, light: QColor, dark: QColor):
-        self.setDarkColor(dark)
-        self.setLightColor(light)
+        self.setDarkBackgroundColor(dark)
+        self.setLightBackgroundColor(light)
 
     def getColor(self):
-        return self._darkColor if isDarkTheme() else self._lightColor
+        return self._darkBackgroundColor if isDarkTheme() else self._lightBackgroundColor
 
     def getXRadius(self):
         return self._xRadius
