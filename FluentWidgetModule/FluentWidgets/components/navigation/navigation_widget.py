@@ -6,15 +6,12 @@ from PySide6.QtWidgets import QWidget
 
 from qfluentwidgets import (
     Pivot, SegmentedWidget, SegmentedToolWidget, SegmentedToggleToolWidget, FluentIconBase, TabBar,
-    TabCloseButtonDisplayMode, PopUpAniStackedWidget, setTheme, Theme, HorizontalSeparator, FluentIcon,
-    TransparentToolButton, Action
+    TabCloseButtonDisplayMode, PopUpAniStackedWidget, setTheme, Theme, HorizontalSeparator
 )
 
-from ...common import setToolTipInfo
 from ..layout import VBoxLayout, HBoxLayout
 from .navigation_bar import NavigationBar, NavigationItemPosition
 from ..widgets import Widget
-from ..menu import Menu
 
 
 class NavigationBase(Widget):
@@ -244,6 +241,7 @@ class SideNavigationWidget(Widget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
+        self.__transparentBgc = False
         self.__widgets = [] # type: List[QWidget]
         self._widgetLayout = HBoxLayout(self)
         self.navigationBar = NavigationBar(self)
@@ -252,6 +250,7 @@ class SideNavigationWidget(Widget):
         self._widgetLayout.setContentsMargins(0, 0, 0, 0)
         self._widgetLayout.addWidget(self.navigationBar)
         self._widgetLayout.addWidget(self._stackedWidget)
+        self.setRadius(8, 8)
 
     def enableReturn(self, enable: bool):
         self.navigationBar.enableReturn(enable)
@@ -295,6 +294,11 @@ class SideNavigationWidget(Widget):
     def removeWidget(self, routeKey: str):
         self._stackedWidget.removeWidget(self.navigationBar.getWidget(routeKey))
         self.navigationBar.removeWidget(routeKey)
+
+    def enableTransparentBackground(self, enable: bool):
+        super().enableTransparentBackground(enable)
+        if bool:
+            self.navigationBar.paintEvent = self.paintEvent
 
     def getAllWidget(self):
         return self.__widgets

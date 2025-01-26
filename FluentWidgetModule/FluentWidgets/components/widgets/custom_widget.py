@@ -16,6 +16,7 @@ class Widget(QWidget):
         self._backgroundImg = None # type: QImage | str
         self._darkBackgroundColor = QColor(32, 32, 32)
         self._lightBackgroundColor = QColor(243, 243, 243)
+        self.__transparentBgc = False
         qconfig.themeChanged.connect(self.update)
 
     def setBackgroundImg(self, image: QImage | str = None):
@@ -58,6 +59,8 @@ class Widget(QWidget):
         return self._backgroundImg
 
     def paintEvent(self, event):
+        if self.__transparentBgc:
+            return
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing | QPainter.LosslessImageRendering | QPainter.SmoothPixmapTransform)
         painter.setBrush(self.getColor())
@@ -69,3 +72,6 @@ class Widget(QWidget):
             path.addRoundedRect(rect, self.getXRadius(), self.getYRadius())
             painter.setClipPath(path)
             painter.drawImage(rect, self.getBackgroundImg())
+
+    def enableTransparentBackground(self, enable: bool):
+        self.__transparentBgc = enable

@@ -17,8 +17,8 @@ class PopDrawerWidgetBase(QFrame):
             aniType=QEasingCurve.Type.Linear,
             width: int = None,
             height: int = None,
-            lightBackgroundColor=QColor('#ECECEC'),
-            darkBackgroundColor=QColor('#202020'),
+            lightBackgroundColor: QColor | str = QColor('#ECECEC'),
+            darkBackgroundColor: QColor | str = QColor('#202020'),
             xRadius=10,
             yRyRadius=10,
             clickParentHide=True
@@ -33,8 +33,8 @@ class PopDrawerWidgetBase(QFrame):
         self._height = height
         self.__xRadius = xRadius
         self.__yRadius = yRyRadius
-        self.__lightBgcColor = lightBackgroundColor
-        self.__darkBgcColor = darkBackgroundColor
+        self.__lightBgcColor = QColor(lightBackgroundColor)
+        self.__darkBgcColor = QColor(darkBackgroundColor)
         self._clickParentHide = clickParentHide
 
         print(f'width: {width}, height: {height}')
@@ -84,9 +84,9 @@ class PopDrawerWidgetBase(QFrame):
         self.__yRadius = yRadius
         self.update()
 
-    def setBackgroundColor(self, lightColor: QColor, darkColor: QColor):
-        self.__lightBgcColor = lightColor
-        self.__darkBgcColor = darkColor
+    def setBackgroundColor(self, lightColor: QColor | str, darkColor: QColor | str):
+        self.__lightBgcColor = QColor(lightColor)
+        self.__darkBgcColor = QColor(darkColor)
         self.update()
 
     def getBackgroundColor(self):

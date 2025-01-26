@@ -143,7 +143,6 @@ class CheckBoxCard(ButtonCardBase):
         super().__init__(icon, title, content, parent)
         self.button = CheckBox(self)
         self.setButtonText(boxText).initButton().setButtonChecked(isChecked)
-        self.hBoxLayout.setContentsMargins(20, 11, 20, 11)
 
     def setButtonChecked(self, isChecked=False):
         self.button.setChecked(isChecked)
