@@ -31,3 +31,4 @@ from .drawer_widget import (
 )
 from .info_bar import ToastInfoBar, ToastInfoBarManager, ToastInfoBarPosition, ToastInfoBarColor
 from .custom_widget import Widget
+from .pop_up_stacked_widget import StackedPopUpPosition, PopUpStackedWidget

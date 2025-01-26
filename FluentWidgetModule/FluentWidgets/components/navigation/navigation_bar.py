@@ -9,7 +9,7 @@ from qfluentwidgets import (
 )
 
 from ...common import setToolTipInfo, setToolTipInfos
-from ..layout import VBoxLayout, HBoxLayout
+from ..layout import VBoxLayout
 from ..widgets import VerticalScrollWidget
 
 
@@ -36,8 +36,12 @@ class NavigationWidget(QWidget):
         self.isPressed = False
         self.isExpand = False
         self.isSelected = isSelected
+        self.selectedColor = None
         self.setFixedSize(50, 35)
         setTheme(Theme.AUTO)
+
+    def setSelectedColor(self, color: QColor | str):
+        self.selectedColor = QColor(color)
 
     def setExpend(self, isExpand: bool):
         self.isExpand = isExpand
@@ -87,7 +91,7 @@ class NavigationWidget(QWidget):
         if self.isSelected:
             painter.drawRoundedRect(self.rect(), 6, 6)
             painter.setPen(Qt.PenStyle.NoPen)
-            painter.setBrush(themeColor())
+            painter.setBrush(self.selectedColor or themeColor())
             painter.drawRoundedRect(0, 5, 5, self.height() - 10, 3, 3)
         if self.isExpand:
             self.setFixedWidth(self.EXPAND_WIDTH)
@@ -362,6 +366,9 @@ class NavigationBar(QWidget):
         if routeKey not in self.__items.keys():
             raise RouteKeyError('routeKey not in items')
         return self.__items[routeKey]
+
+    def getAllWidget(self):
+        return self.__items
 
     def _insertWidgetToLayout(self, index: int, widget: NavigationWidget, position=NavigationItemPosition.SCROLL):
         if position == NavigationItemPosition.SCROLL:

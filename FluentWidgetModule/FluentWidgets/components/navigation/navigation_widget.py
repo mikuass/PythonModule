@@ -297,7 +297,7 @@ class SideNavigationWidget(Widget):
 
     def enableTransparentBackground(self, enable: bool):
         super().enableTransparentBackground(enable)
-        if bool:
+        if enable:
             self.navigationBar.paintEvent = self.paintEvent
 
     def getAllWidget(self):

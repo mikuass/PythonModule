@@ -3,7 +3,7 @@ from PySide6.QtGui import QColor, QPainter
 
 from ..layout import VBoxLayout, HBoxLayout
 from PySide6.QtWidgets import QFrame, QWidget
-from PySide6.QtCore import Qt, QPropertyAnimation, QPoint, QEasingCurve, QTimer, QSize, QEvent, Signal
+from PySide6.QtCore import Qt, QPropertyAnimation, QPoint, QEasingCurve, QTimer, QSize, QEvent
 from qfluentwidgets import FluentIcon, TransparentToolButton, SubtitleLabel, setTheme, Theme, qconfig
 
 
@@ -17,8 +17,8 @@ class PopDrawerWidgetBase(QFrame):
             aniType=QEasingCurve.Type.Linear,
             width: int = None,
             height: int = None,
-            lightBackgroundColor: QColor | str = QColor('#ECECEC'),
-            darkBackgroundColor: QColor | str = QColor('#202020'),
+            lightBackgroundColor: QColor | str = '#ECECEC',
+            darkBackgroundColor: QColor | str = '#202020',
             xRadius=10,
             yRyRadius=10,
             clickParentHide=True
@@ -150,8 +150,8 @@ class LeftPopDrawerWidget(PopDrawerWidgetBase):
             aniType=QEasingCurve.Type.Linear,
             width=None,
             height=None,
-            lightBackgroundColor=QColor('#ECECEC'),
-            darkBackgroundColor=QColor('#202020'),
+            lightBackgroundColor='#ECECEC',
+            darkBackgroundColor='#202020',
             xRadius=10,
             yRyRadius=10,
             clickParentHide=True
@@ -179,8 +179,8 @@ class RightPopDrawerWidget(PopDrawerWidgetBase):
             aniType=QEasingCurve.Type.Linear,
             width=None,
             height=None,
-            lightBackgroundColor=QColor('#ECECEC'),
-            darkBackgroundColor=QColor('#202020'),
+            lightBackgroundColor='#ECECEC',
+            darkBackgroundColor='#202020',
             xRadius=10,
             yRyRadius=10,
             clickParentHide=True
@@ -222,8 +222,8 @@ class TopPopDrawerWidget(PopDrawerWidgetBase):
             aniType=QEasingCurve.Type.Linear,
             width=None,
             height=None,
-            lightBackgroundColor=QColor('#ECECEC'),
-            darkBackgroundColor=QColor('#202020'),
+            lightBackgroundColor='#ECECEC',
+            darkBackgroundColor='#202020',
             xRadius=10,
             yRyRadius=10,
             clickParentHide=True
@@ -261,8 +261,8 @@ class BottomPopDrawerWidget(PopDrawerWidgetBase):
             aniType=QEasingCurve.Type.Linear,
             width=None,
             height=None,
-            lightBackgroundColor=QColor('#ECECEC'),
-            darkBackgroundColor=QColor('#202020'),
+            lightBackgroundColor='#ECECEC',
+            darkBackgroundColor='#202020',
             xRadius=10,
             yRyRadius=10,
             clickParentHide=True

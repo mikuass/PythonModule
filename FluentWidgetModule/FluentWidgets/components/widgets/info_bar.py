@@ -87,8 +87,8 @@ class ToastInfoBar(QFrame):
         self.backgroundColor = QColor('#202020') if qconfig.theme == Theme.DARK else QColor('#ECECEC')
         return self.backgroundColor
 
-    def setBackgroundColor(self, color: QColor):
-        self.backgroundColor = color
+    def setBackgroundColor(self, color: QColor | str):
+        self.backgroundColor = QColor(color)
 
     def __createPosAni(self):
         self.__geometryAni = QPropertyAnimation(self, b'pos')
@@ -103,7 +103,7 @@ class ToastInfoBar(QFrame):
         self.__opacityAni.setStartValue(1)
         self.__opacityAni.setEndValue(0)
         self.__opacityAni.start()
-        self.__opacityAni.finished.connect(self.hide)
+        self.__opacityAni.finished.connect(self.close)
 
     @classmethod
     def new(
@@ -153,8 +153,8 @@ class ToastInfoBar(QFrame):
     ):
         cls.new(parent, title, content, duration, isClosable, position, toastColor)
 
-    def hide(self):
-        super().hide()
+    def close(self):
+        super().close()
         self.deleteLater()
 
     def eventFilter(self, obj, event):
@@ -169,15 +169,12 @@ class ToastInfoBar(QFrame):
 
     def paintEvent(self, event):
         super().paintEvent(event)
-        topPainter = QPainter(self)
-        topPainter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        topPainter.setPen(Qt.PenStyle.NoPen)
-        topPainter.setBrush(self.toastColor)
-        topPainter.drawRoundedRect(0, 0, self.width() - 0.1, self.height(), 8, 8)
-
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(self.toastColor)
+        painter.drawRoundedRect(0, 0, self.width() - 0.1, self.height(), 8, 8)
+
         painter.setBrush(self.getBackgroundColor())
         painter.drawRoundedRect(0, 5, self.width(), self.height() - 5, 6, 6)
 

@@ -42,7 +42,7 @@ class Widget(QWidget):
         self._lightBackgroundColor = QColor(color)
         self.update()
 
-    def setBackgroundColor(self, light: QColor, dark: QColor):
+    def setBackgroundColor(self, light: QColor | str, dark: QColor | str):
         self.setDarkBackgroundColor(dark)
         self.setLightBackgroundColor(light)
 
