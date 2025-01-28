@@ -5,7 +5,7 @@ from enum import Enum
 from PySide6.QtWidgets import QApplication, QStackedWidget
 from PySide6.QtCore import QPropertyAnimation, QPoint, QEasingCurve, Qt
 from FluentWidgets import Widget, HBoxLayout, NavigationBar, VBoxLayout
-from qfluentwidgets import PrimaryPushButton, FluentIcon, TitleLabel, PopUpAniStackedWidget
+from qfluentwidgets import PrimaryPushButton, FluentIcon, TitleLabel
 
 
 class SubWidget(Widget):
@@ -62,7 +62,6 @@ class Window(Widget):
         self.nav.enableReturn(True)
         self.nav.setCurrentItem('item1')
         # self.stackedWidget.setPopUpPosition(StackedPopUpPosition.CUSTOM_POSITION)(QPoint(0, self.height()), QPoint(0, 0))
-        self.stackedWidget.setPopUpPosition(StackedPopUpPosition.BOTTOM_TO_TOP)
 
 
 class StackedPopUpPosition(Enum):

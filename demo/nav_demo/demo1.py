@@ -37,8 +37,6 @@ class NavigationDemo(SideNavigationWidget):
         self.setCurrentWidget('HOME').expandNav().insertSeparator(0, NavigationItemPosition.BOTTOM)
 
         self.setBackgroundImg(r"C:\Users\Administrator\OneDrive\Pictures\14.jpg")
-        self.setDarkColor('deepskyblue')
-        # self.setOpacity(0.9)
         self.setRadius(8, 8)
 
 

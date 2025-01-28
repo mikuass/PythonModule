@@ -28,7 +28,7 @@ class PopUpStackedWidget(QStackedWidget):
         self.__endValue = QPoint(0, 0) # type: QPoint
         self.setPopUpPosition(position)
 
-    def setPopUpPosition(self, position: StackedPopUpPosition) -> any:
+    def setPopUpPosition(self, position: StackedPopUpPosition) -> callable:
         """ position is CUSTOM_POSITION, return setPos function """
         if position == StackedPopUpPosition.CUSTOM_POSITION:
             return self.__setPos

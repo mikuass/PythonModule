@@ -10,7 +10,7 @@ from qfluentwidgets import (
 )
 
 from ..layout import VBoxLayout, HBoxLayout
-from .navigation_bar import NavigationBar, NavigationItemPosition
+from .navigation_bar import NavigationBar, NavigationItemPosition, RouteKeyError
 from ..widgets import Widget
 
 
@@ -242,7 +242,7 @@ class SideNavigationWidget(Widget):
         super().__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
         self.__transparentBgc = False
-        self.__widgets = [] # type: List[QWidget]
+        self.__widgets = {} # type: dict[str, QWidget]
         self._widgetLayout = HBoxLayout(self)
         self.navigationBar = NavigationBar(self)
         self._stackedWidget = PopUpAniStackedWidget(self)
@@ -263,9 +263,11 @@ class SideNavigationWidget(Widget):
     def switchTo(self, widget: QWidget):
         self._stackedWidget.setCurrentWidget(widget)
 
-    def __addToStackedWidget(self, widget: QWidget):
+    def __addToStackedWidget(self, routeKey: str, widget: QWidget):
+        if widget in self.__widgets:
+            raise ValueError('widget already exists')
         self._stackedWidget.addWidget(widget)
-        self.__widgets.append(widget)
+        self.__widgets[routeKey] = widget
 
     def addSubInterface(
             self,
@@ -275,7 +277,7 @@ class SideNavigationWidget(Widget):
             widget: QWidget,
             position=NavigationItemPosition.SCROLL
     ):
-        self.__addToStackedWidget(widget)
+        self.__addToStackedWidget(routeKey, widget)
         self.navigationBar.addItem(routeKey, icon, text, False, lambda: self.switchTo(widget), position)
         return self
 
@@ -292,13 +294,19 @@ class SideNavigationWidget(Widget):
         return self
 
     def removeWidget(self, routeKey: str):
-        self._stackedWidget.removeWidget(self.navigationBar.getWidget(routeKey))
+        if routeKey not in self.__widgets:
+            raise RouteKeyError("routeKey not in items")
+        self._stackedWidget.removeWidget(self.__widgets[routeKey])
         self.navigationBar.removeWidget(routeKey)
+        self.__widgets.pop(routeKey).deleteLater()
 
     def enableTransparentBackground(self, enable: bool):
         super().enableTransparentBackground(enable)
         if enable:
             self.navigationBar.paintEvent = self.paintEvent
+
+    def getWidget(self, routeKey: str):
+        return self.__widgets[routeKey]
 
     def getAllWidget(self):
         return self.__widgets
