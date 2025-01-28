@@ -26,15 +26,18 @@ class Window(SideNavigationWidget):
 
         self.menu.addItem(FluentIcon.HOME, 'item1')
         self.menu.addItem(FluentIcon.GITHUB, 'item2')
-        i3 = self.menu.addItem(FluentIcon.SETTING, 'item3')
+        self.menu.addItem(FluentIcon.SETTING, 'item3')
         self.menu.addSeparator()
+        self.menu.addItem(FluentIcon.COPY, 'copy')
+        self.menu.addItem(FluentIcon.CUT, 'cut')
+        self.menu.addItem(FluentIcon.PASTE, 'past')
 
         # self.menu.removeAction(i3)
 
         for item in self.navigationBar.getAllWidget().values():
             item.setSelectedColor('orange')
 
-        self.menu.enableChecked(True)
+        self.menu.addToGroup(self.menu.actions()[:3])
 
     def initNavigation(self):
         self.addSubInterface(
@@ -60,6 +63,7 @@ class SubWidget(Widget):
 
     def contextMenuEvent(self, event):
         super().contextMenuEvent(event)
+        # self.menu.centerExec(self)
         self.menu.exec(event.globalPos())
 
 

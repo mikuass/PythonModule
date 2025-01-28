@@ -1,14 +1,13 @@
 # coding:utf-8
 from typing import Union, List
 
-from PySide6.QtCore import QPoint
-from PySide6.QtGui import QColor, QActionGroup, QIcon, QShortcut, QKeySequence
+from PySide6.QtGui import QColor, QActionGroup, QIcon, QShortcut, QKeySequence, QAction
 from PySide6.QtWidgets import QWidget
 from qfluentwidgets import (
-    RoundMenu as RM, Action, AvatarWidget, BodyLabel, CaptionLabel, setFont, HyperlinkButton, CheckableMenu,
+    RoundMenu as RM, Action, AvatarWidget, BodyLabel, CaptionLabel, setFont, HyperlinkButton, CheckableMenu as CM,
     MenuIndicatorType, FluentIconBase, MenuAnimationType
 )
-from qfluentwidgets.components.material import AcrylicMenu as AM, AcrylicCheckableMenu
+from qfluentwidgets.components.material import AcrylicMenu as AM, AcrylicCheckableMenu as ACM
 
 
 class MenuBase:
@@ -43,6 +42,9 @@ class MenuBase:
 
     def centerExec(self, widget: QWidget, ani=True, aniType=MenuAnimationType.DROP_DOWN):
         self.exec(widget.mapToGlobal(widget.rect().center()), ani, aniType)
+    
+    def exec(self, pos, ani=True, aniType=MenuAnimationType.DROP_DOWN):
+        super().exec(pos, ani, aniType)
 
 
 class RoundMenu(MenuBase, RM):
@@ -123,27 +125,42 @@ class AcrylicProfileCardMenu(ProfileCardMenu, AM):
         super().exec(pos, ani, aniType)
 
 
-class CheckedMenu(MenuBase, CheckableMenu):
+class CheckedMenuBase(MenuBase):
+
+    def addItem(self, icon: Union[QIcon, str, FluentIconBase], text: str):
+        action = Action(icon, text, checkable=True)
+        self.addAction(action)
+        return action
+
+    def addItems(self, icon: List[Union[QIcon, str, FluentIconBase]], text: List[str]):
+        actions = []
+        for i, t in zip(icon, text):
+            actions.append(self.addItem(i, t))
+        return actions
+
+    def addToGroup(self, actions: List[Action | QAction]):
+        for item in actions:
+            self._actionGroup.addAction(item)
+
+
+class CheckedMenu(CheckedMenuBase, CM):
     """ 可选中菜单栏 """
     def __init__(self, title="", parent=None, indicatorType: MenuIndicatorType = MenuIndicatorType.CHECK):
         super().__init__(title, parent, indicatorType)
         self.setMenuMinWidth(160)
-        self.g = QActionGroup(self)
-
-    def enableChecked(self, enable: bool):
-        if enable:
-            for action in self.actions():
-                print(True)
-                self.g.addAction(action)
+        self._actionGroup = QActionGroup(self)
 
     def exec(self, pos, ani=True, aniType=MenuAnimationType.DROP_DOWN):
         super().exec(pos, ani, aniType)
 
 
-class AcrylicCheckedMenu(CheckedMenu):
-    def __init__(self, parent=None, indicatorType: MenuIndicatorType = MenuIndicatorType.CHECK):
-        super().__init__(parent)
-        self._menu = AcrylicCheckableMenu('', parent, indicatorType)
+class AcrylicCheckedMenu(CheckedMenuBase, ACM):
+    def __init__(self, title="", parent=None, indicatorType: MenuIndicatorType = MenuIndicatorType.CHECK):
+        super().__init__(title, parent, indicatorType)
+        self._actionGroup = QActionGroup(self)
+
+    def exec(self, pos, ani=True, aniType=MenuAnimationType.DROP_DOWN):
+        super().exec(pos, ani, aniType)
 
 
 class Shortcut:
@@ -157,4 +174,3 @@ class Shortcut:
     def addShortcuts(self, keys: List[str], parent: QWidget, functions: List):
         for key, fc in zip(keys, functions):
             self.addShortcut(key, parent, fc)
-        return self
