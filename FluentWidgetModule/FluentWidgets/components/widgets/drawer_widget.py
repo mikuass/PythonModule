@@ -37,8 +37,6 @@ class PopDrawerWidgetBase(QFrame):
         self.__darkBgcColor = QColor(darkBackgroundColor)
         self._clickParentHide = clickParentHide
 
-        print(f'width: {width}, height: {height}')
-
         self._title = SubtitleLabel(title, self)
         self._title.setVisible(bool(title))
         self._closeButton = TransparentToolButton(FluentIcon.CLOSE, self)
