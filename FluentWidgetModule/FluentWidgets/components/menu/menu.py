@@ -12,17 +12,17 @@ from qfluentwidgets.components.material import AcrylicMenu as AM, AcrylicCheckab
 
 class MenuBase:
 
-    def addItem(self, icon: Union[QIcon, str, FluentIconBase], text: str, parent: QWidget = None):
+    def addItem(self, icon: Union[QIcon, str, FluentIconBase], text: str):
         """ add item to menu"""
-        action = Action(icon, text, parent=parent)
+        action = Action(icon, text, self)
         self.addAction(action)
         return action
 
-    def addItems(self, icon: List[Union[QIcon, str, FluentIconBase]], text: List[str], parent: QWidget = None):
+    def addItems(self, icon: List[Union[QIcon, str, FluentIconBase]], text: List[str]):
         """ add items to menu """
         actions = []
         for icon, text in zip(icon, text):
-            actions.append(self.addItem(icon, text, parent))
+            actions.append(self.addItem(icon, text))
         return actions
 
     def setMenuMinWidth(self, width: int):
@@ -127,15 +127,15 @@ class AcrylicProfileCardMenu(ProfileCardMenu, AM):
 
 class CheckedMenuBase(MenuBase):
 
-    def addItem(self, icon: Union[QIcon, str, FluentIconBase], text: str, parent: QWidget = None):
-        action = Action(icon, text, checkable=True, parent=parent)
+    def addItem(self, icon: Union[QIcon, str, FluentIconBase], text: str):
+        action = Action(icon, text, checkable=True)
         self.addAction(action)
         return action
 
-    def addItems(self, icon: List[Union[QIcon, str, FluentIconBase]], text: List[str], parent: QWidget = None):
+    def addItems(self, icon: List[Union[QIcon, str, FluentIconBase]], text: List[str]):
         actions = []
         for i, t in zip(icon, text):
-            actions.append(self.addItem(i, t, parent))
+            actions.append(self.addItem(i, t))
         return actions
 
     def addToGroup(self, actions: List[Action | QAction]):
