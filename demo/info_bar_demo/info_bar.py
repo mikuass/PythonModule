@@ -163,9 +163,7 @@ class ToastInfoBar(QFrame):
 
     def hideEvent(self, event):
         super().hideEvent(event)
-        self.updateGeometry()
         self.closeSignal.emit()
-        self.parent().setFixedSize()
         self.deleteLater()
 
     def eventFilter(self, obj, event):
@@ -218,6 +216,11 @@ class ToastInfoBarManager(QObject):
 
     def remove(self, infoBar: ToastInfoBar):
         self.infoBars.remove(infoBar)
+        self.__adjustMove()
+
+    def __adjustMove(self):
+        for bar in self.infoBars:
+            bar.move(self.getPos(bar)[1])
 
     @classmethod
     def register(cls, element):

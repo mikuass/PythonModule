@@ -6,6 +6,8 @@ from PySide6.QtWidgets import QApplication
 from qfluentwidgets import PushButton, InfoBar
 
 
+import random
+
 class Window(Widget):
     def __init__(self):
         super().__init__()
@@ -35,19 +37,19 @@ class Window(Widget):
         self.tb.clicked.connect(
             lambda:
             ToastInfoBar.success(
-                self, 'top', 'success info bar', -1, position=ToastInfoBarPosition.TOP
+                self, 'top', f'success info bar {random.randint(0, 100)}', position=ToastInfoBarPosition.TOP
             )
         )
         self.tlb.clicked.connect(
             lambda:
             ToastInfoBar.warning(
-                self, 'top left', 'warning info bar', -1, position=ToastInfoBarPosition.TOP_LEFT
+                self, 'top left', 'warning info bar', position=ToastInfoBarPosition.TOP_LEFT
             )
         )
         self.trb.clicked.connect(
             lambda:
             ToastInfoBar.info(
-                self, 'top right', 'info bar', -1, position=ToastInfoBarPosition.TOP_RIGHT
+                self, 'top right', 'info bar', position=ToastInfoBarPosition.TOP_RIGHT
             )
         )
         self.bb.clicked.connect(
@@ -70,7 +72,8 @@ class Window(Widget):
         )
 
 
-    def resizeEvent(self, event, /):
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
         print('Resize')
 
 
