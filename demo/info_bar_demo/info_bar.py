@@ -1,10 +1,11 @@
 # coding:utf-8
 from enum import Enum
+from typing import Union
 
 from PySide6.QtCore import Qt, QSize, QPropertyAnimation, QPoint, QTimer, QObject, QEvent, Signal
-from PySide6.QtGui import QPainter, QColor, QResizeEvent
-from PySide6.QtWidgets import QFrame,  QGraphicsOpacityEffect, QWidget, QApplication
-from qfluentwidgets import BodyLabel, TransparentToolButton, FluentIcon, SubtitleLabel, setTheme, Theme, qconfig
+from PySide6.QtGui import QPainter, QColor
+from PySide6.QtWidgets import QFrame, QGraphicsOpacityEffect, QWidget
+from qfluentwidgets import BodyLabel, TransparentToolButton, FluentIcon, SubtitleLabel, isDarkTheme
 
 from ...components import VBoxLayout, HBoxLayout
 
@@ -48,16 +49,19 @@ class ToastInfoBar(QFrame):
             duration=2000,
             isClosable=True,
             position=ToastInfoBarPosition.TOP_LEFT,
-            toastColor=ToastInfoBarColor.SUCCESS
+            toastColor: QColor | ToastInfoBarColor = ToastInfoBarColor.SUCCESS,
+            isCustomBgcColor=False,
+            bgcColor=None
     ):
         super().__init__(parent)
-        setTheme(Theme.AUTO)
         self.parent().installEventFilter(self)
         self.setMinimumSize(200, 60)
-        self.duration = duration
-        self.toastColor = toastColor
-        self.position = position
-        self.bgcColor = None
+        self._duration = duration
+        self._isClosable = isClosable
+        self._toastColor = toastColor
+        self._position = position
+        self.__isCustomBgcColor = isCustomBgcColor
+        self.__bgcColor = QColor(bgcColor) if isCustomBgcColor else None
 
         self.opacityEffect = QGraphicsOpacityEffect(self)
         self.opacityEffect.setOpacity(1)
@@ -70,35 +74,40 @@ class ToastInfoBar(QFrame):
 
         self.title = SubtitleLabel(title, self)
         self.closeButton = TransparentToolButton(FluentIcon.CLOSE, self)
+        self.closeButton.setCursor(Qt.PointingHandCursor)
         self.content = BodyLabel(content, self)
 
+        self.initLayout()
+        self.manager = ToastInfoBarManager.get(self._position)
+
+    def initLayout(self):
         self.closeButton.setIconSize(QSize(15, 15))
-        self.closeButton.setVisible(isClosable)
+        self.closeButton.setVisible(self._isClosable)
         self.closeButton.clicked.connect(self.__createOpacityAni)
 
         self.hBoxLayout.addWidget(self.title, 1, alignment=Qt.AlignmentFlag.AlignLeft)
         self.hBoxLayout.addWidget(self.closeButton, 1, alignment=Qt.AlignmentFlag.AlignRight)
         self.vBoxLayout.addWidget(self.content)
 
-        self.manager = ToastInfoBarManager.get(self.position)
-
     def adjustSize(self):
         super().adjustSize()
         self.closeButton.adjustSize()
 
     def getBgcColor(self):
-        self.bgcColor = QColor('#202020') if qconfig.theme == Theme.DARK else QColor('#ECECEC')
-        return self.bgcColor
+        if not self.__isCustomBgcColor:
+            self.__bgcColor = QColor('#202020') if isDarkTheme() else QColor('#ECECEC')
+        return self.__bgcColor
 
     def setBgcColor(self, color: QColor | str):
-        self.bgcColor = QColor(color)
+        self.__bgcColor = QColor(color)
 
     def __createPosAni(self):
-        self.__geometryAni = QPropertyAnimation(self, b'pos')
-        self.__geometryAni.setDuration(200)
-        self.__geometryAni.setStartValue(self.startPosition)
-        self.__geometryAni.setEndValue(self.endPosition)
-        self.__geometryAni.start()
+        self.__posAni = QPropertyAnimation(self, b'pos')
+        self.__posAni.setDuration(200)
+        self.__posAni.setStartValue(self.startPosition)
+        self.__posAni.setEndValue(self.endPosition)
+        self.__posAni.start()
+        self.__posAni.finished.connect(self.__posAni.deleteLater)
 
     def __createOpacityAni(self):
         self.__opacityAni = QPropertyAnimation(self.opacityEffect, b'opacity')
@@ -106,7 +115,7 @@ class ToastInfoBar(QFrame):
         self.__opacityAni.setStartValue(1)
         self.__opacityAni.setEndValue(0)
         self.__opacityAni.start()
-        self.__opacityAni.finished.connect(self.hide)
+        self.__opacityAni.finished.connect(lambda: (self.hide(), self.__opacityAni.deleteLater()))
 
     @classmethod
     def new(
@@ -117,9 +126,14 @@ class ToastInfoBar(QFrame):
             duration=2000,
             isClosable=True,
             position=ToastInfoBarPosition.TOP_RIGHT,
-            toastColor=ToastInfoBarColor.SUCCESS
+            toastColor: Union[QColor, str, ToastInfoBarColor] = ToastInfoBarColor.SUCCESS,
+            isCustomBgcColor=False,
+            bgcColor: QColor | str = None
     ):
-        ToastInfoBar(parent, title, content, duration, isClosable, position, toastColor).show()
+        ToastInfoBar(
+            parent, title, content, duration, isClosable,
+            position, QColor(toastColor), isCustomBgcColor, bgcColor
+        ).show()
 
     @classmethod
     def success(
@@ -151,10 +165,11 @@ class ToastInfoBar(QFrame):
 
     @classmethod
     def custom(
-            cls, parent: QWidget, title: str, content: str, toastColor: QColor,
-            duration=2000, isClosable=True, position=ToastInfoBarPosition.TOP_RIGHT
+            cls, parent: QWidget, title: str, content: str, toastColor: QColor | str,
+            duration=2000, isClosable=True, position=ToastInfoBarPosition.TOP_RIGHT,
+            isCustomBgcColor=False, bgcColor: QColor | str = None
     ):
-        cls.new(parent, title, content, duration, isClosable, position, toastColor)
+        cls.new(parent, title, content, duration, isClosable, position, toastColor, isCustomBgcColor, bgcColor)
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -174,14 +189,14 @@ class ToastInfoBar(QFrame):
     def show(self):
         self.setVisible(True)
         self.__createPosAni()
-        QTimer.singleShot(self.duration, self.__createOpacityAni)
+        QTimer.singleShot(self._duration, self.__createOpacityAni)
 
     def paintEvent(self, event):
         super().paintEvent(event)
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.setPen(Qt.PenStyle.NoPen)
-        painter.setBrush(self.toastColor)
+        painter.setBrush(self._toastColor)
         painter.drawRoundedRect(0, 0, self.width() - 0.1, self.height(), 8, 8)
 
         painter.setBrush(self.getBgcColor())
@@ -205,7 +220,6 @@ class ToastInfoBarManager(QObject):
         if self.__initialized:
             return
         super().__init__()
-        self.spacing = 16
         self.margin = 24
         self.infoBars = []
         self.__initialized = True
@@ -246,8 +260,8 @@ class TopToastInfoBarManager(ToastInfoBarManager):
     def getPos(self, infoBar):
         parent = infoBar.parent()
         infoBar.adjustSize()
-        x = (parent.width() - infoBar.width() / 1.3) / 2
-        y = -self.margin
+        x = (parent.width() - infoBar.width()) / 2
+        y = -infoBar.height() + self.margin
         for bar in self.infoBars[:self.infoBars.index(infoBar)]:
             y += bar.height() + self.margin
         return QPoint(x, y), QPoint(x, y + infoBar.height())
@@ -261,7 +275,7 @@ class TopLeftToastInfoBarManager(ToastInfoBarManager):
         y = -self.margin
         for bar in self.infoBars[:self.infoBars.index(infoBar)]:
             y += bar.height() + self.margin
-        return QPoint(-infoBar.width(), y), QPoint(24, y + infoBar.height())
+        return QPoint(-infoBar.width(), y), QPoint(self.margin, y + infoBar.height())
 
 
 @ToastInfoBarManager.register(ToastInfoBarPosition.TOP_RIGHT)
@@ -284,7 +298,7 @@ class BottomToastInfoBarManager(ToastInfoBarManager):
     def getPos(self, infoBar):
         parent = infoBar.parent()
         infoBar.adjustSize()
-        x = (parent.width() - infoBar.width() / 1.3) / 2
+        x = (parent.width() - infoBar.width()) / 2
         y = parent.height() - self.margin
         for bar in self.infoBars[:self.infoBars.index(infoBar)]:
             y -= bar.height() + self.margin
@@ -300,7 +314,7 @@ class BottomLeftToastInfoBarManager(ToastInfoBarManager):
         y = parent.height() - self.margin
         for bar in self.infoBars[:self.infoBars.index(infoBar)]:
             y -= bar.height() + self.margin
-        return QPoint(-infoBar.width(), y), QPoint(24, y - infoBar.height())
+        return QPoint(-infoBar.width(), y), QPoint(self.margin, y - infoBar.height())
 
 
 @ToastInfoBarManager.register(ToastInfoBarPosition.BOTTOM_RIGHT)

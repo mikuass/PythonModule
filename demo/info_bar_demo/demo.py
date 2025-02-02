@@ -3,10 +3,8 @@ import sys
 from FluentWidgets import Widget, VBoxLayout, ToastInfoBarPosition, ToastInfoBar
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QApplication
-from qfluentwidgets import PushButton, InfoBar
+from qfluentwidgets import PushButton, InfoBar, Theme, setTheme
 
-
-import random
 
 class Window(Widget):
     def __init__(self):
@@ -37,7 +35,24 @@ class Window(Widget):
         self.tb.clicked.connect(
             lambda:
             ToastInfoBar.success(
-                self, 'top', f'success info bar {random.randint(0, 100)}', position=ToastInfoBarPosition.TOP
+                self,
+                'top',
+                'success info bar'
+                'success info bar'
+                'success info bar'
+                'success info bar'
+                'success info bar\n'
+                'success info bar'
+                'success info bar'
+                'success info bar'
+                'success info bar'
+                'success info bar\n'
+                'success info bar\n'
+                'success info bar\n'
+                'success info bar\n',
+                2000,
+                True,
+                ToastInfoBarPosition.TOP
             )
         )
         self.tlb.clicked.connect(
@@ -67,7 +82,8 @@ class Window(Widget):
         self.brb.clicked.connect(
             lambda:
             ToastInfoBar.custom(
-                self, 'bottom right', 'custom info bar', QColor('deeppink'), position=ToastInfoBarPosition.BOTTOM_RIGHT
+                self, 'bottom right', 'custom info bar', QColor('deeppink'), position=ToastInfoBarPosition.BOTTOM_RIGHT,
+                isCustomBgcColor=True, bgcColor='deepskyblue'
             )
         )
 
@@ -81,5 +97,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = Window()
     window.resize(800, 520)
+    setTheme(Theme.DARK)
     window.show()
     sys.exit(app.exec())
