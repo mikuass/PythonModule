@@ -2,8 +2,8 @@
 from enum import Enum
 
 from PySide6.QtCore import Qt, QSize, QPropertyAnimation, QPoint, QTimer, QObject, QEvent, Signal
-from PySide6.QtGui import QPainter, QColor
-from PySide6.QtWidgets import QFrame,  QGraphicsOpacityEffect, QWidget
+from PySide6.QtGui import QPainter, QColor, QResizeEvent
+from PySide6.QtWidgets import QFrame,  QGraphicsOpacityEffect, QWidget, QApplication
 from qfluentwidgets import BodyLabel, TransparentToolButton, FluentIcon, SubtitleLabel, setTheme, Theme, qconfig
 
 from ...components import VBoxLayout, HBoxLayout
@@ -82,8 +82,6 @@ class ToastInfoBar(QFrame):
 
         self.manager = ToastInfoBarManager.get(self.position)
 
-        self.startPosition, self.endPosition = self.manager.getPos(self)
-
     def adjustSize(self):
         super().adjustSize()
         self.closeButton.adjustSize()
@@ -161,14 +159,17 @@ class ToastInfoBar(QFrame):
     def showEvent(self, event):
         super().showEvent(event)
         self.manager.add(self)
+        self.startPosition, self.endPosition = self.manager.getPos(self)
 
     def hideEvent(self, event):
         super().hideEvent(event)
+        self.updateGeometry()
         self.closeSignal.emit()
+        self.parent().setFixedSize()
         self.deleteLater()
 
     def eventFilter(self, obj, event):
-        if obj is self.parent() and event.type() == QEvent.Type.Resize:
+        if obj is self.parent() and event.type() in [QEvent.Resize, QEvent.WindowStateChange]:
             self.move(self.manager.getPos(self)[1])
         return super().eventFilter(obj, event)
 
